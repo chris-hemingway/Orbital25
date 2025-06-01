@@ -7,7 +7,7 @@ const authRoutes = require("./routes/auth");
 
 const app = express();
 
-console.log("🧪 Loaded ENV values:");
+console.log("Loaded ENV values:");
 console.log("PORT:", process.env.PORT);
 console.log("MONGO_URI:", process.env.MONGO_URI ? "(found)" : "(missing)");
 console.log("JWT_SECRET:", process.env.JWT_SECRET ? "(found)" : "(missing)");
