@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
-import Login from './Login';
-import Register from './Register'; 
+import Login from './pages/Login';
+import Register from './pages/Register'; 
 // Add more imports here for new pages
 
 function App() {
@@ -34,6 +34,8 @@ function App() {
       setLoading(false);
     }
   };
+
+  
 
   return (
     <Routes>

@@ -1,5 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&display=swap');
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Josefin Sans", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -13,6 +14,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body, button, input, textarea, .ant-typography {
+  font-family: 'Josefin Sans', sans-serif !important;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -23,11 +28,14 @@ a:hover {
 }
 
 body {
+  font-family: 'Josefin Sans', sans-serif;
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: linear-gradient(to right, #535bf2, #fad0c4);
+  
 }
 
 h1 {
@@ -66,3 +74,5 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
