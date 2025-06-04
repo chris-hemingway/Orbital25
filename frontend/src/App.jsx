@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { message } from 'antd';
 import axios from 'axios';
 
 import Login from './pages/Login';
@@ -8,21 +9,23 @@ import Layout from './components/Layout';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import Footer from './components/Footer';
 
 function App() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // to check current location
   const hideHeaderRoutes = ['/login', '/register'];
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleLogin = async (values) => {
     try {
       setLoading(true);
       await axios.post('http://localhost:5001/api/login', values);
-      alert("Login successful!");
+      messageApi.success("Login successful!");
       navigate('/dashboard');
     } catch (err) {
-      alert("Login failed: " + (err?.response?.data?.message || "Unknown error"));
+      messageApi.error("Login failed: " + (err?.response?.data?.message || "Unknown error"));
     } finally {
       setLoading(false);
     }
@@ -32,10 +35,10 @@ function App() {
     try {
       setLoading(true);
       await axios.post('http://localhost:5001/api/register', values);
-      alert("Registered successfully!");
+      messageApi.success("Registered successfully!");
       navigate('/login');
     } catch (err) {
-      alert("Registration failed: " + (err?.response?.data?.message || "Unknown error"));
+      messageApi.error("Registration failed: " + (err?.response?.data?.message || "Unknown error"));
     } finally {
       setLoading(false);
     }
@@ -43,6 +46,7 @@ function App() {
 
   return (
     <>
+      {contextHolder}
       {!hideHeaderRoutes.includes(location.pathname) && <Header />}
       <Routes>
         <Route
@@ -84,6 +88,8 @@ function App() {
           }
         />
       </Routes>
+
+      {!hideHeaderRoutes.includes(location.pathname) && <Footer />}
     </>
   );
 }
