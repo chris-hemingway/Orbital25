@@ -67,7 +67,7 @@ function Login({ onFinish, loading }) {
         <Text type="secondary">Don’t have an Account? </Text>
         <Link onClick={() => navigate('/register')}>Create account</Link>
         <br />
-        <Link onClick={() => { /* guest login handler */ }}>Continue as Guest</Link>
+        <Link onClick={() => navigate('/')}>Continue as Guest</Link>
       </div>
     </Form>
   );

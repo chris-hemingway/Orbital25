@@ -4,6 +4,9 @@
   line-height: 1.5;
   font-weight: 400;
 
+  width: 100%;
+  height: 100%;
+
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
@@ -30,11 +33,9 @@ a:hover {
 body {
   font-family: 'Josefin Sans', sans-serif;
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background: linear-gradient(to right, #535bf2, #fad0c4);
+  background: linear-gradient(to right, #B8B8B8, #f0f0f0);
   
 }
 
