@@ -1,8 +1,6 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App2.css'
-import productData from './Data/Products.json';
+import reactLogo from '../assets/react.svg'
+import productData from '../../../Dataset/Data/Products.json';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');

@@ -10,6 +10,7 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Footer from './components/Footer';
+import Search from './pages/Search';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ function App() {
       setLoading(true);
       await axios.post('http://localhost:5001/api/login', values);
       messageApi.success("Login successful!");
-      navigate('/dashboard');
+      navigate('/search');
     } catch (err) {
       messageApi.error("Login failed: " + (err?.response?.data?.message || "Unknown error"));
     } finally {
@@ -87,6 +88,15 @@ function App() {
             </Layout>
           }
         />
+
+        <Route
+            path="/search"
+            element={
+              <Layout>
+                <Search />
+              </Layout>
+            }
+          />
       </Routes>
 
       {!hideHeaderRoutes.includes(location.pathname) && <Footer />}
