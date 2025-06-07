@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import reactLogo from '../assets/react.svg'
 import productData from '../../../Dataset/Data/Products.json';
 
 function Search() {

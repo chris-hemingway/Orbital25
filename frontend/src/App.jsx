@@ -16,7 +16,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // to check current location
-  const hideHeaderRoutes = ['/login', '/register'];
+  const hideHeaderRoutes = ['/login', '/register', '/search'];
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleLogin = async (values) => {
