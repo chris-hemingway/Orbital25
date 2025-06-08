@@ -10,13 +10,13 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Footer from './components/Footer';
-import Search from './pages/Search';
+import Search from './pages/Search/Search';
 
 function App() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // to check current location
-  const hideHeaderRoutes = ['/login', '/register'];
+  const hideHeaderRoutes = ['/login', '/register', '/search'];
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleLogin = async (values) => {
