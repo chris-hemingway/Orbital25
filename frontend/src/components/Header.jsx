@@ -35,7 +35,8 @@ function Header() {
         top: 0,           
         left: 0,
         right: 0,
-        zIndex: 1000,          
+        zIndex: 1000,
+        height: '48px',
         padding: '16px',
         background: '#f5f5f5',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -58,7 +59,7 @@ function Header() {
       <div style={{ marginLeft: '900px' }}>
       <Menu
         onClick={onClick}
-        style={{ width: 100 }}
+        style={{background: 'transparent'}}
         defaultSelectedKeys={['home']}
         mode="horizontal"
         items={items}

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import productData from '../../../Dataset/Data/Products.json';
+import headphone from '../assets/headphone.png';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
 
-{/* Search logic*/}
+//Search logic
     const keywords = searchTerm.toLowerCase().split(/\s+/).filter(Boolean);
     const filteredProducts = keywords.length === 0
       ? []
@@ -16,8 +17,17 @@ function Search() {
           .sort((a, b) => a.current_price - b.current_price);
 
     return (
-      <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-        <h1>CW DEALS</h1>
+      <div style={{ padding: '2rem', fontFamily: 'Arial', display: 'flex', flexDirection: 'column', alignItems: 'center'  }}>
+          <img
+            src={headphone}
+            style={{
+                width: '246px',
+                height: '311px',
+                top: '236px',
+                left: '64px' }}
+          />
+
+        <h1>Find The Best Deals Across Various Websites!</h1>
         <input
           type="text"
           placeholder="Search for a product..."
