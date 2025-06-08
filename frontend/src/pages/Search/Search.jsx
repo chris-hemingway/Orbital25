@@ -2,22 +2,24 @@ import { useState } from 'react'
 import productData from '../../../../Dataset/Data/Products.json';
 import headphone from '../../assets/headphone.png';
 import chair from '../../assets/chair.png';
-import React from 'react'
 import './search.css'
+import { Select } from 'antd';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
   const [submittedTerm, setSubmittedTerm] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [selectedStores, setSelectedStores] = useState([]);
 
-  //search logic
+  //search and filter logic
   const keywords = submittedTerm.toLowerCase().split(/\s+/).filter(Boolean);
   const filteredProducts = keywords.length === 0
     ? []
     : productData
         .filter(product => {
-          const name = product.name.toLowerCase();
-          return keywords.every(keyword => name.includes(keyword));
+          const nameMatch = keywords.every(k => product.name.toLowerCase().includes(k));
+          const storeMatch = selectedStores.length === 0 || selectedStores.includes(product.store_name.toLowerCase());
+          return nameMatch && storeMatch;
         })
         .sort((a, b) => a.current_price - b.current_price);
 
@@ -69,12 +71,18 @@ function Search() {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       onKeyDown={handleKeyDown}
                     />
-                    <select className="search-select">
-                      <option disabled>Stores</option>
-                      <option value="amazon">Amazon</option>
-                      <option value="lazada">Lazada</option>
-                      <option value="shopee">Shopee</option>
-                    </select>
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      style={{ width: '100px', alignSelf: 'center' }}
+                      placeholder="Stores"
+                      onChange={(value) => setSelectedStores(value)}
+                      options={[
+                        { value: 'amazon', label: 'Amazon' },
+                        { value: 'lazada', label: 'Lazada' },
+                        { value: 'shopee', label: 'Shopee' },
+                      ]}
+                    />
                   </div>
                   <div className="search-container19"></div>
                   <button type="button" className="search-button button" onClick={handleSearch}>
