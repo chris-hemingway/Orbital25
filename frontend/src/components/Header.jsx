@@ -1,18 +1,16 @@
 import { Menu, Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "./AuthContext";
 const { Title } = Typography;
 
 function Header() {
+    const { username, logout } = useAuth();
     const navigate = useNavigate();
     const items = [
       {
         label: 'Menu',       // menu label
         key: 'menu',
         children: [          // dropdown
-          {
-            label: 'Home',
-            key: 'home',
-          },
           {
             label: 'Search',
             key: 'search',
@@ -21,12 +19,20 @@ function Header() {
             label: 'Dashboard',
             key: 'dashboard',
           },
+        ...(username ? [{
+            label: 'Logout',
+            key: 'logout',
+          }] : [])
         ],
       },
     ];
     const onClick = (e) => {
-      navigate(`/${e.key}`);
-    };
+        if (e.key === 'logout') {
+          logout();
+        } else {
+          navigate(`/${e.key}`);
+        }
+      };
 
   return (
     <header
@@ -66,13 +72,22 @@ function Header() {
       />
       </div>
 
-      <Button
-        type="primary"
-        style={{ backgroundColor: '#ff2d87', borderColor: '#ff2d87' }}
-        onClick={() => navigate('/login')}
-      >
-        Login
-      </Button>
+     {/* show login button or username base on token validity */}
+      {username ? (
+        <div style={{ marginRight: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <strong>{username}</strong>
+        </div>
+
+      ) : (
+        <Button
+          type="primary"
+          style={{ backgroundColor: '#ff2d87', borderColor: '#ff2d87' }}
+          onClick={() => navigate('/login')}
+        >
+          Login
+        </Button>
+      )}
+
     </header>
     
   );

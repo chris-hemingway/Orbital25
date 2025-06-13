@@ -3,6 +3,11 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const verifyToken = require("../middleware/authMiddleware");
+
+router.get("/protected", verifyToken, (req, res) => {
+  res.json({ message: "This is a protected route." });
+});
 
 router.post("/register", async (req, res) => {
   try {
@@ -36,8 +41,8 @@ router.post("/login", async (req, res) => {
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
+      expiresIn: "15m",
     });
     res.json({ message: "Login successful", token });
   } catch (err) {
