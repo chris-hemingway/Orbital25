@@ -26,6 +26,13 @@ function Register({ onFinish, loading, onNavigateToLogin }) {
         <Text type="secondary">Create your account to get started</Text>
       </div>
 
+      <Form.Item name="username" rules={[
+        { required: true, message: "Please enter your username" },
+        { min: 3, max: 20, message: "Username must be 3–20 characters" }
+      ]}>
+        <Input placeholder="Username" />
+      </Form.Item>
+
       <Form.Item name="email" rules={[
         { required: true, message: "Please enter your email" },
         { type:"email", message: "Please enter a valid email address"}

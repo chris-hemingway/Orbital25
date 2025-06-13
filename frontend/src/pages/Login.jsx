@@ -29,12 +29,10 @@ function Login({ onFinish, loading }) {
         <Text type="secondary">Please login using account details below</Text>
       </div>
 
-      <Form.Item name="email" 
-      rules={[
-        { required: true, message: "Please enter your email" },
-        { type: "email", message: "Please enter a valid email address"}
-        ]}>
-        <Input placeholder="Email Address" />
+      <Form.Item name="email" rules={[
+        { required: true, message: "Please enter your username or email" }
+      ]}>
+        <Input placeholder="Username or Email" />
       </Form.Item>
 
       <Form.Item name="password" 

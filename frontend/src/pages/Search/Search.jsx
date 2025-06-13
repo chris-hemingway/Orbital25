@@ -41,7 +41,7 @@ function Search() {
         <div className="search-container12">
                 <div className="search-container13"></div>
                 <img src={headphone} alt="image" className="search-image1" />
-              </div>
+        </div>
 
               <div className="search-container14">
                 <div className="search-container15"></div>

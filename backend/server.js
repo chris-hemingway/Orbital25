@@ -13,7 +13,7 @@ console.log("MONGO_URI:", process.env.MONGO_URI ? "(found)" : "(missing)");
 console.log("JWT_SECRET:", process.env.JWT_SECRET ? "(found)" : "(missing)");
 
 app.use(cors({
-  origin: "http://localhost:5173", // your Vite frontend
+  origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
