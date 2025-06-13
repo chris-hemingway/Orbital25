@@ -10,12 +10,13 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Footer from './components/Footer';
+import Search from './pages/Search/Search';
 
 function App() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // to check current location
-  const hideHeaderRoutes = ['/login', '/register'];
+  const hideHeaderRoutes = ['/login', '/register', '/search'];
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleLogin = async (values) => {
@@ -23,7 +24,7 @@ function App() {
       setLoading(true);
       await axios.post('http://localhost:5001/api/login', values);
       messageApi.success("Login successful!");
-      navigate('/dashboard');
+      navigate('/search');
     } catch (err) {
       messageApi.error("Login failed: " + (err?.response?.data?.message || "Unknown error"));
     } finally {
@@ -50,13 +51,21 @@ function App() {
       {!hideHeaderRoutes.includes(location.pathname) && <Header />}
       <Routes>
         <Route
-          path="/"
+          path="/home"
           element={
           <Layout>
             <Home />
           </Layout>
           }
         />
+        <Route
+           path="/"
+           element={
+               <Layout>
+                    <Home />
+                  </Layout>
+                  }
+                />
         <Route
           path="/login"
           element={<Login onFinish={handleLogin} loading={loading} />}
@@ -71,14 +80,6 @@ function App() {
             />
           }
         />
-
-        {}
-        <Route
-          path="/"
-          element={<Login onFinish={handleLogin} loading={loading} />}
-        />
-
-        {}
         <Route
           path="/dashboard"
           element={
@@ -87,6 +88,14 @@ function App() {
             </Layout>
           }
         />
+        <Route
+            path="/search"
+            element={
+              <Layout>
+                <Search />
+              </Layout>
+            }
+          />
       </Routes>
 
       {!hideHeaderRoutes.includes(location.pathname) && <Footer />}

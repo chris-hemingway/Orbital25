@@ -1,9 +1,33 @@
-import { Button, Typography } from 'antd';
+import { Menu, Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 const { Title } = Typography;
 
 function Header() {
     const navigate = useNavigate();
+    const items = [
+      {
+        label: 'Menu',       // menu label
+        key: 'menu',
+        children: [          // dropdown
+          {
+            label: 'Home',
+            key: 'home',
+          },
+          {
+            label: 'Search',
+            key: 'search',
+          },
+          {
+            label: 'Dashboard',
+            key: 'dashboard',
+          },
+        ],
+      },
+    ];
+    const onClick = (e) => {
+      navigate(`/${e.key}`);
+    };
+
   return (
     <header
       style={{
@@ -11,7 +35,8 @@ function Header() {
         top: 0,           
         left: 0,
         right: 0,
-        zIndex: 1000,          
+        zIndex: 1000,
+        height: '48px',
         padding: '16px',
         background: '#f5f5f5',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -31,6 +56,16 @@ function Header() {
             CW Deals
         </Title>
 
+      <div style={{ marginLeft: '900px' }}>
+      <Menu
+        onClick={onClick}
+        style={{background: 'transparent'}}
+        defaultSelectedKeys={['home']}
+        mode="horizontal"
+        items={items}
+      />
+      </div>
+
       <Button
         type="primary"
         style={{ backgroundColor: '#ff2d87', borderColor: '#ff2d87' }}
@@ -42,5 +77,6 @@ function Header() {
     
   );
 }
+
 
 export default Header;
