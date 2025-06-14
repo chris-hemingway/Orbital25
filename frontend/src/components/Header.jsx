@@ -62,10 +62,8 @@ function Header() {
       <Title 
       level={3} 
       style={{ 
-        margin: 0,
-        cursor: 'pointer',
+        margin: 0
          }}
-         onClick={() => navigate('/')}
          >
             CW Deals
         </Title>

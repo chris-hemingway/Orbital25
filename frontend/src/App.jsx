@@ -20,7 +20,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const hideHeaderRoutes = ['/login', '/register', '/search'];
   const [messageApi, contextHolder] = message.useMessage();
   const [username, setUsername] = useState(null);
   const auth = useAuth();
@@ -88,7 +87,6 @@ useEffect(() => {
   return (
     <>
       {contextHolder}
-      {!hideHeaderRoutes.includes(location.pathname) && <Header username={username} />}
       <Routes>
         <Route
           path="/home"
@@ -103,7 +101,7 @@ useEffect(() => {
            element={
                <Layout>
                     <Home />
-                  </Layout>
+               </Layout>
                   }
                 />
         <Route
@@ -132,13 +130,11 @@ useEffect(() => {
           path="/search"
           element={
             <RequireAuth>
-              <Layout><Search /></Layout>
+              <Layout hideFooter><Search /></Layout>
             </RequireAuth>
           }
         />
       </Routes>
-
-      {!hideHeaderRoutes.includes(location.pathname) && <Footer />}
     </>
   );
 }

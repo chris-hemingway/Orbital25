@@ -1,13 +1,14 @@
 import Header from './Header';
-// add sidebar footer etc next time
+import Footer from './Footer';
 
-function Layout({ children }) {
+const Layout = ({ children, hideHeader = false, hideFooter = false }) => {
   return (
     <>
-      <Header />
+      {!hideHeader && <Header />}
       <main>{children}</main>
+      {!hideFooter && <Footer />}
     </>
   );
-}
+};
 
 export default Layout;
