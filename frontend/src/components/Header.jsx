@@ -9,9 +9,9 @@ function Header() {
     const navigate = useNavigate();
     const items = [
       {
-        label: 'Menu',       // menu label
+        label: 'Menu',
         key: 'menu',
-        children: [          // dropdown
+        children: [
           {
             label: 'Search',
             key: 'search',
@@ -20,13 +20,20 @@ function Header() {
             label: 'Dashboard',
             key: 'dashboard',
           },
-        ...(token && !isGuest ? [{
-          label: 'Logout',
-          key: 'logout',
-        }] : [])
+          // add Wishlist only when logged in
+          ...(token && !isGuest ? [{
+            label: 'Wishlist',
+            key: 'wishlist',
+          }] : []),
+          // add Logout only when logged in
+          ...(token && !isGuest ? [{
+            label: 'Logout',
+            key: 'logout',
+          }] : [])
         ],
       },
     ];
+
     const onClick = (e) => {
         if (e.key === 'logout') {
           logout();

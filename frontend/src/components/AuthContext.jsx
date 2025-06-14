@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     const decoded = jwtDecode(newToken);
     setToken(newToken);
     setUsername(decoded.username);
-    setIsGuest(false); // ensure it's a real user
+    setIsGuest(false); // ensure it's a real user not guest
   };
 
   const loginAsGuest = () => {
