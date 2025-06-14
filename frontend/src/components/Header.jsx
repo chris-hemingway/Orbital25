@@ -2,9 +2,10 @@ import { Menu, Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "./AuthContext";
 const { Title } = Typography;
+import '../globals.css'
 
 function Header() {
-    const { username, logout } = useAuth();
+    const { username, token, isGuest, logout } = useAuth();
     const navigate = useNavigate();
     const items = [
       {
@@ -19,10 +20,10 @@ function Header() {
             label: 'Dashboard',
             key: 'dashboard',
           },
-        ...(username ? [{
-            label: 'Logout',
-            key: 'logout',
-          }] : [])
+        ...(token && !isGuest ? [{
+          label: 'Logout',
+          key: 'logout',
+        }] : [])
         ],
       },
     ];
@@ -73,11 +74,10 @@ function Header() {
       </div>
 
      {/* show login button or username base on token validity */}
-      {username ? (
+      {token && !isGuest ? (
         <div style={{ marginRight: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <strong>{username}</strong>
+          <strong className="profile-username">{username}</strong>
         </div>
-
       ) : (
         <Button
           type="primary"
@@ -92,6 +92,5 @@ function Header() {
     
   );
 }
-
 
 export default Header;

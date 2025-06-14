@@ -17,6 +17,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.profile-username {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #333;
+  margin-left: 8px;
+  transition: color 0.2s ease;
+}
+
 body, button, input, textarea, .ant-typography {
   font-family: 'Josefin Sans', sans-serif !important;
 }

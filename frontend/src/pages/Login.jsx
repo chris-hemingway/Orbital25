@@ -1,10 +1,12 @@
 import { Form, Input, Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../components/AuthContext";
 
 const { Title, Text, Link } = Typography;
 
 function Login({ onFinish, loading }) {
   const navigate = useNavigate();
+  const auth = useAuth();
 
   return (
     <Form
@@ -65,7 +67,10 @@ function Login({ onFinish, loading }) {
         <Text type="secondary">Don’t have an Account? </Text>
         <Link onClick={() => navigate('/register')}>Create account</Link>
         <br />
-        <Link onClick={() => navigate('/')}>Continue as Guest</Link>
+        <Link onClick={() => {
+          auth.loginAsGuest();
+          navigate('/search');
+        }}>Continue as Guest</Link>
       </div>
     </Form>
   );
