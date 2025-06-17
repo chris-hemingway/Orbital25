@@ -1,38 +1,26 @@
-import { useState } from 'react'
-import productData from '../../../../Dataset/Data/Products.json';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './search.css';
+import { Select } from 'antd';
 import headphone from '../../assets/headphone.png';
 import chair from '../../assets/chair.png';
-import './search.css'
-import { Select } from 'antd';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [submittedTerm, setSubmittedTerm] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [selectedStores, setSelectedStores] = useState([]);
+  const navigate = useNavigate();
 
-  //search and filter logic
-  const keywords = submittedTerm.toLowerCase().split(/\s+/).filter(Boolean);
-  const filteredProducts = keywords.length === 0
-    ? []
-    : productData
-        .filter(product => {
-          const nameMatch = keywords.every(k => product.name.toLowerCase().includes(k));
-          const storeMatch = selectedStores.length === 0 || selectedStores.includes(product.store_name.toLowerCase());
-          return nameMatch && storeMatch;
-        })
-        .sort((a, b) => a.current_price - b.current_price);
-
-  //search only if 'Enter' or click Search Now
   const handleSearch = () => {
-    setSubmittedTerm(searchTerm);
-    setIsSubmitted(true);
+    navigate('/products', {
+      state: {
+        searchTerm,
+        selectedStores,
+      },
+    });
   };
+
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      setSubmittedTerm(searchTerm);
-      setIsSubmitted(true);
-    }
+    if (e.key === 'Enter') handleSearch();
   };
 
   return (
