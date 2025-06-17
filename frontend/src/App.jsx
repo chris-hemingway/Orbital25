@@ -17,6 +17,7 @@ import Search from './pages/Search/Search';
 import { useAuth } from "./components/AuthContext";
 import ProductDetails from './pages/ProductDetails';
 import Temp from './pages/Temp';
+import Product from './pages/Product';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -149,6 +150,15 @@ useEffect(() => {
         <Route
           path="/temp"
           element={<Temp />}
+        />
+
+        <Route
+          path="/products"
+          element={
+              <RequireAuth>
+                <Layout><Product /></Layout>
+              </RequireAuth>
+          }
         />
 
       </Routes>
