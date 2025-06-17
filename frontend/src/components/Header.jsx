@@ -68,7 +68,7 @@ function Header() {
             CW Deals
         </Title>
 
-      <div style={{ marginLeft: '900px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
       <Menu
         onClick={onClick}
         style={{background: 'transparent'}}
@@ -76,13 +76,11 @@ function Header() {
         mode="horizontal"
         items={items}
       />
-      </div>
+      
 
      {/* show login button or username base on token validity */}
       {token && !isGuest ? (
-        <div style={{ marginRight: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <strong className="profile-username">{username}</strong>
-        </div>
       ) : (
         <Button
           type="primary"
@@ -92,6 +90,7 @@ function Header() {
           Login
         </Button>
       )}
+    </div>
 
     </header>
     
