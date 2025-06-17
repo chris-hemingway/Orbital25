@@ -15,6 +15,8 @@ import Footer from './components/Footer';
 import RequireAuth from './components/RequireAuth';
 import Search from './pages/Search/Search';
 import { useAuth } from "./components/AuthContext";
+import ProductDetails from './pages/ProductDetails';
+import Temp from './pages/Temp';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -42,7 +44,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const handleRegister = async (values) => {
     try {
@@ -134,6 +136,21 @@ useEffect(() => {
             </RequireAuth>
           }
         />
+
+        <Route
+          path="/product-details"
+          element={
+            <Layout>
+             <ProductDetails />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/temp"
+          element={<Temp />}
+        />
+
       </Routes>
     </>
   );
