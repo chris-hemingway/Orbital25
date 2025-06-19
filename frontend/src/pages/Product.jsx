@@ -223,6 +223,8 @@ function Product() {
             current={currentPage}
             pageSize={pageSize}
             total={filteredProducts.length}
+            align='center'
+            showSizeChanger = {false}
             onChange={(page) => setCurrentPage(page)}
           />
         </>
