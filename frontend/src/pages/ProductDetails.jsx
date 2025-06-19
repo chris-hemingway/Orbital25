@@ -88,7 +88,7 @@ function ProductDetails() {
             <Space size="middle" align="center">
               <Button
                 type="primary"
-                href={product.product_link}
+                href={product.link}
                 target="_blank"
                 style={{ backgroundColor: '#ff2d87', borderColor: '#ff2d87' }}
               >

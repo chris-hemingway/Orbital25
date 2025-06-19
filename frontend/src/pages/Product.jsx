@@ -163,11 +163,9 @@ function Product() {
                         flexShrink: 0,
                       }}
                     />
-                    {/* Change link to Product detail */}
+                    {}
                     <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      onClick={() => navigate('/product-details', { state: { product: item }})}
                       style={{
                         flex: 1,
                         textDecoration: 'none',
