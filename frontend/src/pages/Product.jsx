@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import productData from '../../../Dataset/Data/Products.json';
+import axios from 'axios';
 import { Card, Pagination, Row, Col, Input, Select, Button } from 'antd';
 import './Search/search.css';
 import { HeartOutlined } from '@ant-design/icons';
@@ -20,6 +20,22 @@ function Product() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8;
+
+  const [productData, setProductData] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get('http://localhost:5001/api/products');
+        setProductData(res.data);
+      } catch (err) {
+        console.error('Error fetching products', err);
+      }
+    };
+    fetchProducts();
+    console.log(productData);
+  }, []);
+
 
   useEffect(() => {
     setActiveSearchTerm(initialTerm);
@@ -57,6 +73,8 @@ function Product() {
       },
     });
   };
+
+  
 
   return (
     <div
