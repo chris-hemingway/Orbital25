@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
+const productRoutes = require('./routes/productRoutes');
 
 const app = express();
 
@@ -14,7 +15,8 @@ app.use(cors({
   credentials: true
 }));
 
-const productRoutes = require('./routes/productRoutes');
+app.use(express.json());
+
 app.use('/api/products', productRoutes);
 
 app.use("/api/auth", authRoutes);
@@ -26,7 +28,7 @@ console.log("JWT_SECRET:", process.env.JWT_SECRET ? "(found)" : "(missing)");
 
 
 app.options("*", cors());
-app.use(express.json());
+
 
 app.use((req, res, next) => {
   console.log(`Incoming: ${req.method} ${req.url}`);

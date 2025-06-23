@@ -30,7 +30,7 @@ function App() {
   const handleLogin = async (values) => {
     try {
       setLoading(true);
-      const res = await axios.post('http://localhost:5001/api/login', values);
+      const res = await axios.post('http://localhost:5001/api/auth/login', values);
       const token = res.data.token;
       auth.login(res.data.token);
 
@@ -50,7 +50,7 @@ function App() {
   const handleRegister = async (values) => {
     try {
       setLoading(true);
-      await axios.post('http://localhost:5001/api/register', values);
+      await axios.post('http://localhost:5001/api/auth/register', values);
       messageApi.success("Registered successfully!");
       navigate('/login');
     } catch (err) {
