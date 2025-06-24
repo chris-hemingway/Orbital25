@@ -120,13 +120,11 @@ function Product() {
         </Button>
       </div>
 
-      {/* Product Grid */}
       {paginatedProducts.length > 0 ? (
         <>
           <Row gutter={[16, 16]} justify="center">
             {paginatedProducts.map((item, index) => (
               <Col key={index} xs={24}>
-                {/* Center the card */}
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <div
                     style={{
@@ -195,7 +193,7 @@ function Product() {
                       <p style={{ margin: 0, color: '#888' }}>{item.store_name}</p>
                     </a>
 
-                    {/* Wishlist */}
+                    {/* Wishlist heart removed for now
                     <HeartOutlined
                       style={{
                         marginLeft: 16,
@@ -211,7 +209,7 @@ function Product() {
                         console.log(`Wishlisted: ${item.name}`);
                         // TODO: Add actual wishlist logic
                       }}
-                    />
+                    /> */}
                   </div>
                 </div>
               </Col>

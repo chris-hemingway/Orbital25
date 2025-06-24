@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
 const productRoutes = require('./routes/productRoutes');
+const wishlistRoutes = require('./routes/wishlistRoutes')
 
 const app = express();
 
@@ -19,7 +20,9 @@ app.use(express.json());
 
 app.use('/api/products', productRoutes);
 
-app.use("/api/auth", authRoutes);
+app.use('/api/auth', authRoutes);
+
+app.use('/api/wishlist', wishlistRoutes);
 
 console.log("Loaded ENV values:");
 console.log("PORT:", process.env.PORT);
@@ -34,6 +37,7 @@ app.use((req, res, next) => {
   console.log(`Incoming: ${req.method} ${req.url}`);
   next();
 });
+
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {

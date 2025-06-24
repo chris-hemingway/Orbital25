@@ -18,6 +18,7 @@ import { useAuth } from "./components/AuthContext";
 import ProductDetails from './pages/ProductDetails';
 import Temp from './pages/Temp';
 import Product from './pages/Product';
+import Wishlist from './pages/Wishlist';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -157,6 +158,15 @@ useEffect(() => {
           element={
               <RequireAuth>
                 <Layout><Product /></Layout>
+              </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/wishlist"
+          element={
+              <RequireAuth>
+                <Layout><Wishlist /></Layout>
               </RequireAuth>
           }
         />

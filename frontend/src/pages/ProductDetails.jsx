@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, Rate, Button, Space, notification } from 'antd';
-import { HeartOutlined, HeartFilled } from '@ant-design/icons';
+import { HeartOutlined, HeartFilled, ArrowLeftOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../components/AuthContext';
+import axios from 'axios';
 
 function ProductDetails() {
   const { state } = useLocation();
@@ -11,16 +12,38 @@ function ProductDetails() {
   const { token } = useAuth();
   const [wishlisted, setWishlisted] = useState(false);
   const [api, contextHolder] = notification.useNotification();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkIfWishlisted = async () => {
+      if (!token || !product?.product_id) return;
+  
+      try {
+        const res = await axios.get('http://localhost:5001/api/wishlist', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+  
+        const wishlistedProductIds = res.data.map((item) => item.product_id);
+        if (wishlistedProductIds.includes(product.product_id)) {
+          setWishlisted(true);
+        }
+      } catch (err) {
+        console.error('Failed to fetch wishlist', err);
+      }
+    };
+  
+    checkIfWishlisted();
+  }, [token, product]);
 
   if (!product) {
     return <p>No product data available.</p>;
   }
 
-  const handleWishlistClick = () => {
+  const handleWishlistClick = async () => {
     if (!token) {
       api.info({
         message: 'Login Required',
-        description: 'Please log in to add items to your wishlist.',
+        description: 'Please log in to manage your wishlist.',
         placement: 'topRight',
       });
       return;
@@ -28,20 +51,40 @@ function ProductDetails() {
 
     try {
       const user = jwtDecode(token);
-      if (!user?.id) throw new Error('Invalid user');
+      const userId = user?.id || user?._id;
 
-      setWishlisted(true);
+      if (!userId) throw new Error('Invalid user');
 
-      api.success({
-        message: 'Added to Wishlist',
-        description: 'This item has been added to your wishlist.',
-        placement: 'topRight',
-      });
+      if (!wishlisted) {
+        // Add to wishlist
+        await axios.post(
+          'http://localhost:5001/api/wishlist',
+          { product_id: product.product_id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      // TODO: Send to backend
-      // await axios.post('/api/wishlist', { userId: user.id, productId: product.id });
+        api.success({
+          message: 'Added to Wishlist',
+          description: 'This item has been added to your wishlist.',
+          placement: 'topRight',
+        });
+        setWishlisted(true);
+      } else {
+        // Remove from wishlist
+        await axios.delete(`http://localhost:5001/api/wishlist/${product.product_id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        api.info({
+          message: 'Removed from Wishlist',
+          description: 'This item has been removed from your wishlist.',
+          placement: 'topRight',
+        });
+        setWishlisted(false);
+      }
 
     } catch (err) {
+      console.error(err);
       api.error({
         message: 'Error',
         description: 'Invalid or expired login. Please re-authenticate.',
@@ -54,14 +97,20 @@ function ProductDetails() {
     <div
       style={{
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexDirection: 'column',
         minHeight: '100vh',
         padding: '2rem',
         backgroundColor: '#fdfdfd',
+        alignItems: 'center',
       }}
     >
       {contextHolder}
+
+      <div style={{ alignSelf: 'flex-start', marginBottom: '3rem', marginTop: '4rem' }}>
+        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
+          Back
+        </Button>
+      </div>
 
       <Card style={{ width: '800px', padding: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
