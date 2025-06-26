@@ -8,7 +8,7 @@ const productRoutes = require('./routes/productRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes')
 
 const app = express();
-const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "https://orbital25-987150758714.asia-southeast1.run.app" ];
 
 app.use(cors({
   origin: function (origin, callback) {
