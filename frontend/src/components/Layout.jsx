@@ -1,13 +1,24 @@
 import Header from './Header';
-// add sidebar footer etc next time
+import Footer from './Footer';
 
-function Layout({ children }) {
+const Layout = ({ children, hideHeader = false, hideFooter = false }) => {
   return (
-    <>
-      <Header />
-      <main>{children}</main>
-    </>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+      }}
+    >
+      {!hideHeader && <Header />}
+
+      <main style={{ flexGrow: 1 }}>
+        {children}
+      </main>
+
+      {!hideFooter && <Footer />}
+    </div>
   );
-}
+};
 
 export default Layout;

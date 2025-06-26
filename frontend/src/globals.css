@@ -7,14 +7,21 @@
   width: 100%;
   height: 100%;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.profile-username {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #333;
+  margin-left: 8px;
+  transition: color 0.2s ease;
 }
 
 body, button, input, textarea, .ant-typography {

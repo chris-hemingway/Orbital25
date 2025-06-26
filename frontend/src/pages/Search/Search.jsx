@@ -1,38 +1,26 @@
-import { useState } from 'react'
-import productData from '../../../../Dataset/Data/Products.json';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './search.css';
+import { Select } from 'antd';
 import headphone from '../../assets/headphone.png';
 import chair from '../../assets/chair.png';
-import './search.css'
-import { Select } from 'antd';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [submittedTerm, setSubmittedTerm] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [selectedStores, setSelectedStores] = useState([]);
+  const navigate = useNavigate();
 
-  //search and filter logic
-  const keywords = submittedTerm.toLowerCase().split(/\s+/).filter(Boolean);
-  const filteredProducts = keywords.length === 0
-    ? []
-    : productData
-        .filter(product => {
-          const nameMatch = keywords.every(k => product.name.toLowerCase().includes(k));
-          const storeMatch = selectedStores.length === 0 || selectedStores.includes(product.store_name.toLowerCase());
-          return nameMatch && storeMatch;
-        })
-        .sort((a, b) => a.current_price - b.current_price);
-
-  //search only if 'Enter' or click Search Now
   const handleSearch = () => {
-    setSubmittedTerm(searchTerm);
-    setIsSubmitted(true);
+    navigate('/products', {
+      state: {
+        searchTerm,
+        selectedStores,
+      },
+    });
   };
+
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      setSubmittedTerm(searchTerm);
-      setIsSubmitted(true);
-    }
+    if (e.key === 'Enter') handleSearch();
   };
 
   return (
@@ -41,7 +29,7 @@ function Search() {
         <div className="search-container12">
                 <div className="search-container13"></div>
                 <img src={headphone} alt="image" className="search-image1" />
-              </div>
+        </div>
 
               <div className="search-container14">
                 <div className="search-container15"></div>
@@ -58,9 +46,9 @@ function Search() {
                   </h1>
                   <h1 className="search-text6">Various Websites!</h1>
                   <span className="search-text7">
-                    Search the item you wish to buy and select the e-commerce 
+                    Search the item you wish to buy and select the e-commerce
                   </span>
-                  <span>Websites from the drop down menu!</span>
+                  <span>websites from the drop down menu!</span>
                   <div className="search-container17"></div>
                   <div className="search-container18">
                     <input
@@ -94,43 +82,8 @@ function Search() {
               <div className="search-container20"></div>
               <img src={chair} alt="image" className="search-image2" />
       </div>
-
-      {/* List of products */}
-      {isSubmitted && (
-        <div style={{ padding: '2rem' }}>
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((item, index) => (
-              <div key={index} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                marginBottom: '1.5rem',
-                paddingBottom: '1rem',
-                borderBottom: '1px solid #ccc'
-              }}>
-                <img
-                  src={item.image_url}
-                  alt={item.name}
-                  style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                />
-                <div>
-                  <h2>
-                    <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#007BFF' }}>
-                      {item.name}
-                    </a>
-                  </h2>
-                  <p>Price: ${item.current_price}</p>
-                  <p>Site: {item.store_name}</p>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No matching products found.</p>
-          )}
-        </div>
-      )}
-    </>
-  );
+      </>
+      );
 }
 
 

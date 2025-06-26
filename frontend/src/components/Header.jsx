@@ -1,18 +1,17 @@
 import { Menu, Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "./AuthContext";
 const { Title } = Typography;
+import '../globals.css'
 
 function Header() {
+    const { username, token, isGuest, logout } = useAuth();
     const navigate = useNavigate();
     const items = [
       {
-        label: 'Menu',       // menu label
+        label: 'Menu',
         key: 'menu',
-        children: [          // dropdown
-          {
-            label: 'Home',
-            key: 'home',
-          },
+        children: [
           {
             label: 'Search',
             key: 'search',
@@ -21,12 +20,27 @@ function Header() {
             label: 'Dashboard',
             key: 'dashboard',
           },
+          // add Wishlist only when logged in
+          ...(token && !isGuest ? [{
+            label: 'Wishlist',
+            key: 'wishlist',
+          }] : []),
+          // add Logout only when logged in
+          ...(token && !isGuest ? [{
+            label: 'Logout',
+            key: 'logout',
+          }] : [])
         ],
       },
     ];
+
     const onClick = (e) => {
-      navigate(`/${e.key}`);
-    };
+        if (e.key === 'logout') {
+          logout();
+        } else {
+          navigate(`/${e.key}`);
+        }
+      };
 
   return (
     <header
@@ -48,15 +62,13 @@ function Header() {
       <Title 
       level={3} 
       style={{ 
-        margin: 0,
-        cursor: 'pointer',
+        margin: 0
          }}
-         onClick={() => navigate('/')}
          >
             CW Deals
         </Title>
 
-      <div style={{ marginLeft: '900px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
       <Menu
         onClick={onClick}
         style={{background: 'transparent'}}
@@ -64,19 +76,25 @@ function Header() {
         mode="horizontal"
         items={items}
       />
-      </div>
+      
 
-      <Button
-        type="primary"
-        style={{ backgroundColor: '#ff2d87', borderColor: '#ff2d87' }}
-        onClick={() => navigate('/login')}
-      >
-        Login
-      </Button>
+     {/* show login button or username base on token validity */}
+      {token && !isGuest ? (
+          <strong className="profile-username">{username}</strong>
+      ) : (
+        <Button
+          type="primary"
+          style={{ backgroundColor: '#ff2d87', borderColor: '#ff2d87' }}
+          onClick={() => navigate('/login')}
+        >
+          Login
+        </Button>
+      )}
+    </div>
+
     </header>
     
   );
 }
-
 
 export default Header;
