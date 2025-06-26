@@ -1,11 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config({path: '../.env'});
+require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
 const productRoutes = require('./routes/productRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes')
+
+const PORT = process.env.PORT || 5001;
 
 const app = express();
 const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "https://orbital-frontend-987150758714.asia-southeast1.run.app" ];
@@ -49,8 +51,8 @@ app.use((req, res, next) => {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
-    app.listen(process.env.PORT, () =>
-      console.log(`Server running on port ${process.env.PORT}`)
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
     );
   })
   .catch((err) => console.error("MongoDB error:", err));
