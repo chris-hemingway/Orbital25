@@ -13,13 +13,14 @@ function ProductDetails() {
   const [wishlisted, setWishlisted] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const checkIfWishlisted = async () => {
       if (!token || !product?.product_id) return;
   
       try {
-        const res = await axios.get('http://localhost:5001/api/wishlist', {
+        const res = await axios.get(`${API_URL}/api/wishlist`, {
           headers: { Authorization: `Bearer ${token}` }
         });
   
@@ -58,7 +59,7 @@ function ProductDetails() {
       if (!wishlisted) {
         // Add to wishlist
         await axios.post(
-          'http://localhost:5001/api/wishlist',
+          `${API_URL}/api/wishlist`,
           { product_id: product.product_id },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -71,7 +72,7 @@ function ProductDetails() {
         setWishlisted(true);
       } else {
         // Remove from wishlist
-        await axios.delete(`http://localhost:5001/api/wishlist/${product.product_id}`, {
+        await axios.delete(`${API_URL}/api/wishlist/${product.product_id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

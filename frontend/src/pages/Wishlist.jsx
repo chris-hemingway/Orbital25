@@ -12,19 +12,20 @@ function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchWishlistDetails = async () => {
       if (!token) return;
       try {
         const decoded = jwtDecode(token);
-        const res = await axios.get('http://localhost:5001/api/wishlist', {
+        const res = await axios.get(`${API_URL}/api/wishlist`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const productIds = res.data.map((item) => item.product_id);
 
-        const productDetails = await axios.get('http://localhost:5001/api/products');
+        const productDetails = await axios.get(`${API_URL}/api/products`);
         const filtered = productDetails.data.filter((p) => productIds.includes(p.product_id));
 
         setWishlist(filtered);

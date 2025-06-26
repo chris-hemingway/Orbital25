@@ -27,11 +27,12 @@ function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const [username, setUsername] = useState(null);
   const auth = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleLogin = async (values) => {
     try {
       setLoading(true);
-      const res = await axios.post('https://orbital25-987150758714.asia-southeast1.run.app/api/auth/login', values);
+      const res = await axios.post(`${API_URL}/api/auth/login`, values);
       const token = res.data.token;
       auth.login(res.data.token);
 
@@ -51,7 +52,7 @@ function App() {
   const handleRegister = async (values) => {
     try {
       setLoading(true);
-      await axios.post('http://localhost:5001/api/auth/register', values);
+      await axios.post(`${API_URL}/api/auth/register`, values);
       messageApi.success("Registered successfully!");
       navigate('/login');
     } catch (err) {
