@@ -148,7 +148,7 @@ function Product() {
                       (e.currentTarget.style.boxShadow = 'none')
                     }
                   >
-                    {/* Left: Product image */}
+                    {/* Product image */}
                     <img
                       alt={item.name}
                       src={item.image_url}

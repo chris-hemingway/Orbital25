@@ -46,9 +46,9 @@ function Search() {
                   </h1>
                   <h1 className="search-text6">Various Websites!</h1>
                   <span className="search-text7">
-                    Search the item you wish to buy and select the e-commerce 
+                    Search the item you wish to buy and select the e-commerce
                   </span>
-                  <span>Websites from the drop down menu!</span>
+                  <span>websites from the drop down menu!</span>
                   <div className="search-container17"></div>
                   <div className="search-container18">
                     <input
