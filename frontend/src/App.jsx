@@ -31,7 +31,7 @@ function App() {
   const handleLogin = async (values) => {
     try {
       setLoading(true);
-      const res = await axios.post('http://localhost:5001/api/auth/login', values);
+      const res = await axios.post('https://orbital25-987150758714.asia-southeast1.run.app/api/auth/login', values);
       const token = res.data.token;
       auth.login(res.data.token);
 
