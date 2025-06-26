@@ -1,15 +1,10 @@
-FROM node:18-alpine as builder
+FROM node:18-alpine AS builder
 
 WORKDIR /app
-
 COPY package*.json ./
 RUN npm install
-
 COPY . .
-
-ENV VITE_API_URL=https://orbital25-987150758714.asia-southeast1.run.app
-
-
+ENV VITE_API_URL=https://orbital-backend-987150758714.asia-southeast1.run.app
 RUN npm run build
 
 FROM nginx:alpine

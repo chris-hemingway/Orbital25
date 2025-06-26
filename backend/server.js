@@ -7,7 +7,7 @@ const authRoutes = require("./routes/auth");
 const productRoutes = require('./routes/productRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes')
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "https://orbital-frontend-987150758714.asia-southeast1.run.app" ];
