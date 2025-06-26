@@ -1,16 +1,23 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config({path: '../.env'});
 
 const authRoutes = require("./routes/auth");
 const productRoutes = require('./routes/productRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes')
 
 const app = express();
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
