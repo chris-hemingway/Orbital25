@@ -22,6 +22,9 @@ app.use(cors({
 app.options("*", cors());
 app.use(express.json());
 
+const productRoutes = require("./routes/products");
+app.use("/api/products", productRoutes);
+
 app.use((req, res, next) => {
   console.log(`Incoming: ${req.method} ${req.url}`);
   next();
