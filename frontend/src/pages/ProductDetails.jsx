@@ -142,7 +142,7 @@ function ProductDetails() {
                 target="_blank"
                 style={{ backgroundColor: '#ff2d87', borderColor: '#ff2d87' }}
               >
-                View on Store
+                View In Store
               </Button>
 
               <div onClick={handleWishlistClick} style={{ cursor: 'pointer', fontSize: '20px' }}>
