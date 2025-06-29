@@ -126,7 +126,7 @@ useEffect(() => {
         <Route
           path="/dashboard"
           element={
-              <RequireAuth>
+             <RequireAuth>
                <Layout><Dashboard /></Layout>
              </RequireAuth>
           }
