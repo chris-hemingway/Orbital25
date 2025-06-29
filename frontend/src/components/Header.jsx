@@ -16,10 +16,11 @@ function Header() {
             label: 'Search',
             key: 'search',
           },
-          {
+          // add Dashboard only when logged in
+          ...(token && !isGuest ? [{
             label: 'Dashboard',
             key: 'dashboard',
-          },
+          }] : []),
           // add Wishlist only when logged in
           ...(token && !isGuest ? [{
             label: 'Wishlist',
