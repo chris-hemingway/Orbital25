@@ -59,7 +59,7 @@ function Home() {
                     padding: '12px 24px',
                     fontSize: '16px',
                   }}
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/search')}
                 >
                   Get Started
                 </Button>
