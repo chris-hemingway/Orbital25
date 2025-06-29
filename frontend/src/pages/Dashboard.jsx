@@ -8,6 +8,7 @@ function Dashboard() {
         textAlign: 'center'
       }}>
         <h2>Welcome to your Dashboard!</h2>
+        <h2>More Features Coming Soon!</h2>
       </div>
     );
   }
