@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './search.css';
 import { Select } from 'antd';
-import headphone from '../../assets/headphone.png';
-import chair from '../../assets/chair.png';
+import headphone from '/assets/headphone.png';
+import chair from '/assets/chair.png';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
