@@ -1,0 +1,25 @@
+name: Daily Product Price Updater
+
+on:
+  push:
+    branches:
+      -pricehistory
+  schedule:
+    - cron: '0 18 * * *' # 2AM Singapore (UTC+8 = 18:00 UTC)
+  workflow_dispatch: # Optional: allows manual trigger
+
+jobs:
+  run-updater-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Trigger Cloud Run Job
+        run: |
+          gcloud run jobs execute product-price-updater \
+            --region asia-southeast1 \
+            --project orbital-464106
