@@ -1,6 +1,9 @@
 name: Daily Product Price Updater
 
 on:
+  push:
+    branches:
+      -pricehistory
   schedule:
     - cron: '0 18 * * *' # 2AM Singapore (UTC+8 = 18:00 UTC)
   workflow_dispatch: # Optional: allows manual trigger
