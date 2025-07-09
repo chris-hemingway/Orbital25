@@ -66,7 +66,7 @@ function ProductDetails() {
 
        // Step through each history point and assign the *next* price
        for (let i = 0; i < rawHistory.length - 1; i++) {
-         const date = new Date(rawHistory[i].date).toISOString().split('T')[0];
+         const date = new Date(rawHistory[i].date);
          const price = rawHistory[i + 1].price;
 
          steppedData.push({ price, date });
@@ -74,20 +74,18 @@ function ProductDetails() {
 
        // Handle current price
        const lastHistoryDate = new Date(rawHistory[rawHistory.length - 1].date);
-       const lastDateStr = lastHistoryDate.toISOString().split('T')[0];
-
        steppedData.push({
          price: product.current_price,
-         date: lastDateStr,
+         date: lastHistoryDate,
        });
 
-       // Only extend to today if it's NOT already the last date
-       if (lastDateStr !== todayStr) {
+       if (lastHistoryDate.toDateString() !== today.toDateString()) {
          steppedData.push({
            price: product.current_price,
-           date: todayStr,
+           date: today,
          });
        }
+
 
        setPriceHistory(steppedData);
      }
@@ -227,7 +225,15 @@ function ProductDetails() {
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={priceHistory}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
+                    <XAxis
+                      dataKey="date"
+                      type="number"
+                      scale="time"
+                      domain={['auto', 'auto']}
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString('en-CA') // shows YYYY-MM-DD
+                      }
+                    />
                     <YAxis domain={['auto', 'auto']} />
                     <Tooltip />
                     <Line
