@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const productV2Schema = new mongoose.Schema({
+const productV3Schema = new mongoose.Schema({
     product_id: Number,
     name: String,
     current_price: Number,
@@ -18,4 +18,4 @@ const productV2Schema = new mongoose.Schema({
     ]
 });
 
-module.exports = mongoose.model('ProductV2', productV2Schema, 'productv2');
+module.exports = mongoose.model('ProductV3', productV3Schema, 'productv3');

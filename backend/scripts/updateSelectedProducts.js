@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const puppeteer = require('puppeteer');
-const Product = require('../models/ProductV2');
+const Product = require('../models/ProductV3');
 
 const productsToScrape = [
     {
