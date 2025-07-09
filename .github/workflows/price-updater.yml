@@ -20,6 +20,6 @@ jobs:
 
       - name: Trigger Cloud Run Job
         run: |
-          gcloud run jobs execute product-price-amazon \
+          gcloud run jobs execute product-updater-amazon \
             --region asia-southeast1 \
             --project orbital-464106
