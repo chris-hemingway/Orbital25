@@ -3,7 +3,7 @@ name: Daily Product Price Updater
 on:
   push:
     branches:
-      -pricehistory
+      - pricehistory
   schedule:
     - cron: '0 18 * * *' # 2AM Singapore (UTC+8 = 18:00 UTC)
   workflow_dispatch: # Optional: allows manual trigger
@@ -20,6 +20,6 @@ jobs:
 
       - name: Trigger Cloud Run Job
         run: |
-          gcloud run jobs execute product-price-updater \
+          gcloud run jobs execute product-updater-amazon \
             --region asia-southeast1 \
             --project orbital-464106

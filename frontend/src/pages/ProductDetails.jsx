@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Card, Rate, Button, Space, notification } from 'antd';
+import { Card, Rate, Button, Space, notification, Collapse } from 'antd';
 import { HeartOutlined, HeartFilled, ArrowLeftOutlined } from '@ant-design/icons';
+import { Badge, Typography, Tag } from 'antd';
+import { DollarCircleOutlined, LineChartOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../components/AuthContext';
 import axios from 'axios';
-
 import {
   LineChart,
   Line,
@@ -15,6 +16,8 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
+
+const { Panel } = Collapse;
 
 //helper function
 function getTimeSince(date) {
@@ -40,19 +43,19 @@ function ProductDetails() {
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
-
   const [priceHistory, setPriceHistory] = useState([]);
+  const [expandHistory, setExpandHistory] = useState(false); // toggle for collapse
 
   // Check if product is already in wishlist
   useEffect(() => {
     const checkIfWishlisted = async () => {
       if (!token || !product?.product_id) return;
-  
+
       try {
         const res = await axios.get(`${API_URL}/api/wishlist`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-  
+
         const wishlistedProductIds = res.data.map((item) => item.product_id);
         if (wishlistedProductIds.includes(product.product_id)) {
           setWishlisted(true);
@@ -61,7 +64,7 @@ function ProductDetails() {
         console.error('Failed to fetch wishlist', err);
       }
     };
-  
+
     checkIfWishlisted();
   }, [token, product]);
 
@@ -70,48 +73,36 @@ function ProductDetails() {
   }
 
   // Set price history (only for specific 4 products)
-   useEffect(() => {
-     if (product?.product_id && [184, 229, 95, 79].includes(product.product_id)) {
-       const rawHistory = [...product.price_history].sort(
-         (a, b) => new Date(a.date) - new Date(b.date)
-       );
+  useEffect(() => {
+    if (product?.product_id && [184, 229, 95, 79].includes(product.product_id)) {
+      const rawHistory = [...product.price_history].sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
 
-       const today = new Date();
-       const todayStr = today.toISOString().split('T')[0]; // "YYYY-MM-DD"
-       const steppedData = [];
+      const today = new Date();
+      const steppedData = [];
 
-       // Step through each history point and assign the *next* price
-       for (let i = 0; i < rawHistory.length - 1; i++) {
-         const date = new Date(rawHistory[i].date);
-         const price = rawHistory[i + 1].price;
+      for (let i = 0; i < rawHistory.length - 1; i++) {
+        const date = new Date(rawHistory[i].date);
+        const price = rawHistory[i + 1].price;
+        steppedData.push({ price, date });
+      }
 
-         steppedData.push({ price, date });
-       }
+      const lastHistoryDate = new Date(rawHistory[rawHistory.length - 1].date);
+      steppedData.push({ price: product.current_price, date: lastHistoryDate });
 
-       // Handle current price
-       const lastHistoryDate = new Date(rawHistory[rawHistory.length - 1].date);
-       steppedData.push({
-         price: product.current_price,
-         date: lastHistoryDate,
-       });
+      if (lastHistoryDate.toDateString() !== today.toDateString()) {
+        steppedData.push({ price: product.current_price, date: today });
+      }
 
-       if (lastHistoryDate.toDateString() !== today.toDateString()) {
-         steppedData.push({
-           price: product.current_price,
-           date: today,
-         });
-       }
-
-
-       setPriceHistory(steppedData);
-     }
-   }, [product]);
+      setPriceHistory(steppedData);
+    }
+  }, [product]);
 
   const getLowestPriceInfo = () => {
     if (priceHistory.length === 0) return null;
 
     let minEntry = priceHistory[0];
-
     for (const entry of priceHistory) {
       if (entry.price < minEntry.price) {
         minEntry = entry;
@@ -124,9 +115,7 @@ function ProductDetails() {
 
     return {
       price: minEntry.price.toFixed(2),
-      dateStr: isNow
-        ? 'Now'
-        : minEntry.date.toLocaleDateString('en-CA'),
+      dateStr: isNow ? 'Now' : minEntry.date.toLocaleDateString('en-CA'),
       since: isNow ? 'Current Price' : getTimeSince(minEntry.date),
       isNow,
     };
@@ -149,7 +138,6 @@ function ProductDetails() {
       if (!userId) throw new Error('Invalid user');
 
       if (!wishlisted) {
-        // Add to wishlist
         await axios.post(
           `${API_URL}/api/wishlist`,
           { product_id: product.product_id },
@@ -163,7 +151,6 @@ function ProductDetails() {
         });
         setWishlisted(true);
       } else {
-        // Remove from wishlist
         await axios.delete(`${API_URL}/api/wishlist/${product.product_id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -175,7 +162,6 @@ function ProductDetails() {
         });
         setWishlisted(false);
       }
-
     } catch (err) {
       console.error(err);
       api.error({
@@ -249,48 +235,99 @@ function ProductDetails() {
         </div>
       </Card>
 
-      {/* 📊 Price History Graph */}
-            {priceHistory.length > 0 && (
-              <div style={{ width: '100%', maxWidth: 800, marginTop: '2rem' }}>
-                <h3>Price History</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={priceHistory}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      type="number"
-                      scale="time"
-                      domain={['auto', 'auto']}
-                      tickFormatter={(date) =>
-                        new Date(date).toLocaleDateString('en-CA') // shows YYYY-MM-DD
-                      }
-                    />
-                    <YAxis domain={['auto', 'auto']} />
-                    <Tooltip
-                      labelFormatter={(value) =>
-                        new Date(value).toLocaleDateString('en-CA') // YYYY-MM-DD
-                      }
-                      formatter={(value) => [`S$${value}`, 'Price']}
-                    />
-                    <Line
-                      type="stepAfter"
-                      dataKey="price"
-                      stroke="#8884d8"
-                      strokeWidth={2}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-                {getLowestPriceInfo() && (
-                  <p style={{ marginTop: '0.5rem' }}>
-                    <strong>Lowest Price:</strong> S${getLowestPriceInfo().price} <br />
-                    <strong>Last Seen:</strong>{' '}
-                    {getLowestPriceInfo().dateStr}
-                    {getLowestPriceInfo().isNow ? ' (Current Price)' : ` (${getLowestPriceInfo().since})`}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+      {/* 📉 Price History Collapse Panel */}
+      {priceHistory.length > 0 && (
+        <div style={{ width: '100%', maxWidth: 800, marginTop: '2rem' }}>
+          <Collapse
+            bordered={false}
+            defaultActiveKey={[]}
+            expandIconPosition="end"
+            style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}
+          >
+            <Panel
+              header={
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <LineChartOutlined />
+                  <span style={{ fontWeight: 'bold' }}>Price History</span>
+                </div>
+              }
+              key="1"
+              style={{ padding: '0 1rem' }}
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={priceHistory}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="date"
+                    type="number"
+                    scale="time"
+                    domain={['auto', 'auto']}
+                    tickFormatter={(date) =>
+                      new Date(date).toLocaleDateString('en-CA') // shows YYYY-MM-DD
+                    }
+                  />
+                  <YAxis domain={['auto', 'auto']} />
+                  <Tooltip
+                    labelFormatter={(value) =>
+                      new Date(value).toLocaleDateString('en-CA')
+                    }
+                    formatter={(value) => [`S$${value}`, 'Price']}
+                  />
+                  <Line
+                    type="stepAfter"
+                    dataKey="price"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+
+              {/* 💡 Lowest Historical Price */}
+              {getLowestPriceInfo() && (
+                <div style={{
+                  marginTop: '1rem',
+                  background: '#f9fafb',
+                  padding: '1.2rem',
+                  borderRadius: '8px',
+                  border: '1px solid #eee'
+                }}>
+                  <div style={{ marginBottom: '0.75rem' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '16px' }}>💰 Lowest Price:</span>{' '}
+                    <span style={{ fontSize: '18px', fontWeight: '600' }}>
+                      <Tag color="red" style={{ fontSize: '16px', padding: '4px 10px' }}>
+                        S${getLowestPriceInfo().price}
+                      </Tag>
+                    </span>
+                  </div>
+                  <div>
+                    <span style={{ fontWeight: 'bold', fontSize: '16px' }}>📅 Last Seen:</span>{' '}
+                    {getLowestPriceInfo().isNow ? (
+                      <Tag
+                        color="green"
+                        style={{ fontSize: '16px', padding: '4px 10px' }}
+                        className="blinking-now"
+                      >
+                        Now
+                      </Tag>
+                    ) : (
+                      <>
+                        <Tag style={{ fontSize: '16px', padding: '4px 10px' }}>
+                          {getLowestPriceInfo().dateStr}
+                        </Tag>
+                        <Tag color="blue" style={{ fontSize: '16px', padding: '4px 10px' }}>
+                          {getLowestPriceInfo().since}
+                        </Tag>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </Panel>
+          </Collapse>
+        </div>
+      )}
+
+    </div>
   );
 }
 
