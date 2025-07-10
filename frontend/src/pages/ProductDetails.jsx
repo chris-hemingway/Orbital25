@@ -16,6 +16,22 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
+//helper function
+function getTimeSince(date) {
+  const now = new Date();
+  const diffTime = now - date;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const diffMonths = Math.floor(diffDays / 30);
+
+  if (diffMonths >= 1) {
+    return `${diffMonths} month${diffMonths > 1 ? 's' : ''} ago`;
+  } else if (diffDays >= 1) {
+    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  } else {
+    return 'Today';
+  }
+}
+
 function ProductDetails() {
   const { state } = useLocation();
   const product = state?.product;
@@ -91,15 +107,30 @@ function ProductDetails() {
      }
    }, [product]);
 
+  const getLowestPriceInfo = () => {
+    if (priceHistory.length === 0) return null;
 
-    // Predict next price using 3-point moving average
-   const getPrediction = () => {
-      const lastThree = priceHistory.slice(-3).map((p) => p.price);
-      if (lastThree.length === 0) return null;
-      const avg =
-        lastThree.reduce((sum, val) => sum + val, 0) / lastThree.length;
-      return avg.toFixed(2);
+    let minEntry = priceHistory[0];
+
+    for (const entry of priceHistory) {
+      if (entry.price < minEntry.price) {
+        minEntry = entry;
+      }
+    }
+
+    const isNow =
+      parseFloat(minEntry.price.toFixed(2)) ===
+      parseFloat(product.current_price.toFixed(2));
+
+    return {
+      price: minEntry.price.toFixed(2),
+      dateStr: isNow
+        ? 'Now'
+        : minEntry.date.toLocaleDateString('en-CA'),
+      since: isNow ? 'Current Price' : getTimeSince(minEntry.date),
+      isNow,
     };
+  };
 
   const handleWishlistClick = async () => {
     if (!token) {
@@ -235,7 +266,12 @@ function ProductDetails() {
                       }
                     />
                     <YAxis domain={['auto', 'auto']} />
-                    <Tooltip />
+                    <Tooltip
+                      labelFormatter={(value) =>
+                        new Date(value).toLocaleDateString('en-CA') // YYYY-MM-DD
+                      }
+                      formatter={(value) => [`S$${value}`, 'Price']}
+                    />
                     <Line
                       type="stepAfter"
                       dataKey="price"
@@ -244,9 +280,14 @@ function ProductDetails() {
                     />
                   </LineChart>
                 </ResponsiveContainer>
-                <p style={{ marginTop: '1rem' }}>
-                  <strong>Predicted Next Price:</strong> S${getPrediction()}
-                </p>
+                {getLowestPriceInfo() && (
+                  <p style={{ marginTop: '0.5rem' }}>
+                    <strong>Lowest Price:</strong> S${getLowestPriceInfo().price} <br />
+                    <strong>Last Seen:</strong>{' '}
+                    {getLowestPriceInfo().dateStr}
+                    {getLowestPriceInfo().isNow ? ' (Current Price)' : ` (${getLowestPriceInfo().since})`}
+                  </p>
+                )}
               </div>
             )}
           </div>
