@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Card, Rate, Button, Space, notification, Collapse } from 'antd';
-import { HeartOutlined, HeartFilled, ArrowLeftOutlined } from '@ant-design/icons';
-import { Badge, Typography, Tag } from 'antd';
-import { DollarCircleOutlined, LineChartOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Card, Rate, Button, Space, notification, Collapse, Badge, Typography, Tag } from 'antd';
+import { HeartOutlined, HeartFilled, ArrowLeftOutlined, DollarCircleOutlined, LineChartOutlined, UserOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../components/AuthContext';
 import axios from 'axios';
@@ -18,6 +16,51 @@ import {
 } from 'recharts'
 
 const { Panel } = Collapse;
+
+function getRecentAverageByDays(data, days) {
+  if (!data || data.length === 0) return null;
+
+  const now = new Date();
+  const cutoff =
+    days === 'all' ? new Date(0) : new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+  let weightedSum = 0;
+  let totalDuration = 0;
+
+  for (let i = 0; i < data.length - 1; i++) {
+    const start = new Date(data[i].date);
+    const end = new Date(data[i + 1].date);
+
+    // Skip if the period ends before the cutoff
+    if (end <= cutoff) continue;
+
+    // Clamp start to cutoff if needed
+    const effectiveStart = start < cutoff ? cutoff : start;
+    const durationMs = end - effectiveStart;
+    const durationDays = durationMs / (1000 * 60 * 60 * 24);
+
+    if (durationDays > 0) {
+      weightedSum += data[i].price * durationDays;
+      totalDuration += durationDays;
+    }
+  }
+
+  // Add final period from last price change to now
+  const last = data[data.length - 1];
+  const lastStart = new Date(last.date);
+  const effectiveLastStart = lastStart < cutoff ? cutoff : lastStart;
+  const durationMs = now - effectiveLastStart;
+  const durationDays = durationMs / (1000 * 60 * 60 * 24);
+
+  if (durationDays > 0) {
+    weightedSum += last.price * durationDays;
+    totalDuration += durationDays;
+  }
+
+  if (totalDuration === 0) return null;
+
+  return weightedSum / totalDuration;
+}
 
 //helper function
 function getTimeSince(date) {
@@ -45,6 +88,7 @@ function ProductDetails() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [priceHistory, setPriceHistory] = useState([]);
   const [expandHistory, setExpandHistory] = useState(false); // toggle for collapse
+  const [avgWindow, setAvgWindow] = useState(30); // default: 30 days
 
   // Check if product is already in wishlist
   useEffect(() => {
@@ -74,7 +118,7 @@ function ProductDetails() {
 
   // Set price history (only for specific 4 products)
   useEffect(() => {
-    if (product?.product_id && [184, 229, 95, 79].includes(product.product_id)) {
+    if (product?.price_history && product.price_history.length > 0) {
       const rawHistory = [...product.price_history].sort(
         (a, b) => new Date(a.date) - new Date(b.date)
       );
@@ -118,6 +162,20 @@ function ProductDetails() {
       dateStr: isNow ? 'Now' : minEntry.date.toLocaleDateString('en-CA'),
       since: isNow ? 'Current Price' : getTimeSince(minEntry.date),
       isNow,
+    };
+  };
+
+  const getPriceDropInfo = () => {
+    if (priceHistory.length === 0) return null;
+
+    const prices = priceHistory.map((entry) => entry.price);
+    const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const discountPercent = ((avgPrice - product.current_price) / avgPrice) * 100;
+
+    return {
+      average: avgPrice.toFixed(2),
+      drop: discountPercent > 0 ? discountPercent.toFixed(1) : null,
+      isPromo: discountPercent >= 10 // You can change the threshold
     };
   };
 
@@ -235,7 +293,95 @@ function ProductDetails() {
         </div>
       </Card>
 
-      {/* 📉 Price History Collapse Panel */}
+      {/* Price Drop Details Panel */}
+      {priceHistory.length > 0 && (
+        <div style={{ width: '100%', maxWidth: 800, marginTop: '2rem' }}>
+          <Collapse
+            bordered={false}
+            defaultActiveKey={[]}
+            expandIconPosition="end"
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: '8px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+            }}
+          >
+            <Panel
+              header={
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <DollarCircleOutlined />
+                  <span style={{ fontWeight: 'bold' }}>Price Details</span>
+                </div>
+              }
+              key="2"
+              style={{ padding: '0 1rem' }}
+            >
+              {/* 🔘 Toggle average time window */}
+              <div style={{ marginBottom: '1rem' }}>
+                <span style={{ marginRight: '0.5rem' }}>Average from last:</span>
+                {[7, 30, 90, 'all'].map((days) => (
+                  <Button
+                    key={days}
+                    size="small"
+                    type={avgWindow === days ? 'primary' : 'default'}
+                    onClick={() => setAvgWindow(days)}
+                    style={{ marginRight: '0.5rem' }}
+                  >
+                    {days === 'all' ? 'All Time' : `${days}d`}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Price drop from selected average */}
+              {(() => {
+                const now = new Date();
+                const cutoff =
+                  avgWindow === 'all' ? new Date(0) : new Date(now.getTime() - avgWindow * 24 * 60 * 60 * 1000);
+                if (
+                  (avgWindow === 'all' && priceHistory.length === 0) ||
+                  (avgWindow !== 'all' && new Date(priceHistory[0].date) > cutoff)
+                ) {
+                  return <Tag color="default">No data available for selected period</Tag>;
+                }
+
+                const avg = getRecentAverageByDays(priceHistory, avgWindow);
+                const diff = product.current_price - avg;
+                const diffPercent = ((Math.abs(diff) / avg) * 100).toFixed(1);
+
+                return (
+                  <div>
+                    <p>
+                      <strong>Average Price ({avgWindow === 'all' ? 'All Time' : `${avgWindow}d`}):</strong>{' '}
+                      S${avg.toFixed(2)}
+                    </p>
+                    <p><strong>Current Price:</strong> S${product.current_price.toFixed(2)}</p>
+
+                    {diff < -0.05 * avg ? (
+                      <Tag
+                        color="green"
+                        style={{ fontSize: '16px', padding: '6px 12px', fontWeight: 'bold' }}
+                      >
+                        ↓ {diffPercent}% below {avgWindow === 'all' ? 'All Time' : `${avgWindow}-day`} average
+                      </Tag>
+                    ) : diff > 0.05 * avg ? (
+                      <Tag
+                        color="red"
+                        style={{ fontSize: '16px', padding: '6px 12px', fontWeight: 'bold' }}
+                      >
+                        ↑ {diffPercent}% above {avgWindow === 'all' ? 'All Time' : `${avgWindow}-day`} average
+                      </Tag>
+                    ) : (
+                      <Tag color="yellow">Normal price</Tag>
+                    )}
+                  </div>
+                );
+              })()}
+            </Panel>
+          </Collapse>
+        </div>
+      )}
+
+      {/* Price History Collapse Panel */}
       {priceHistory.length > 0 && (
         <div style={{ width: '100%', maxWidth: 800, marginTop: '2rem' }}>
           <Collapse
@@ -326,6 +472,34 @@ function ProductDetails() {
           </Collapse>
         </div>
       )}
+
+    {/* Product Reviews Panel */}
+    <div style={{ width: '100%', maxWidth: 800, marginTop: '2rem' }}>
+      <Collapse
+        bordered={false}
+        defaultActiveKey={[]}
+        expandIconPosition="end"
+        style={{
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+        }}
+      >
+        <Panel
+          header={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <UserOutlined />
+              <span style={{ fontWeight: 'bold' }}>Product Reviews</span>
+            </div>
+          }
+          key="3"
+          style={{ padding: '0 1rem' }}
+        >
+          {/* Placeholder for review content */}
+          <p style={{ padding: '1rem', color: '#888' }}>No reviews available yet.</p>
+        </Panel>
+      </Collapse>
+    </div>
 
     </div>
   );
