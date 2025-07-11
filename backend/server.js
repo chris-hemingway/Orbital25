@@ -6,6 +6,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth");
 const productRoutes = require('./routes/productRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes')
+const reviewRoutes = require('./routes/reviewRoutes');
 
 const PORT = process.env.PORT || 8080;
 
@@ -32,6 +33,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 
 app.use('/api/wishlist', wishlistRoutes);
+
+app.use('/api/reviews', reviewRoutes);
 
 console.log("Loaded ENV values:");
 console.log("PORT:", process.env.PORT);

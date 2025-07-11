@@ -89,6 +89,9 @@ function ProductDetails() {
   const [priceHistory, setPriceHistory] = useState([]);
   const [expandHistory, setExpandHistory] = useState(false); // toggle for collapse
   const [avgWindow, setAvgWindow] = useState(30); // default: 30 days
+  const [reviews, setReviews] = useState([]);
+  const [newRating, setNewRating] = useState(0);
+  const [newComment, setNewComment] = useState('');
 
   // Check if product is already in wishlist
   useEffect(() => {
@@ -141,6 +144,21 @@ function ProductDetails() {
 
       setPriceHistory(steppedData);
     }
+  }, [product]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!product?.product_id) return;
+
+      try {
+        const res = await axios.get(`${API_URL}/api/reviews/${product.product_id}`);
+        setReviews(res.data);
+      } catch (err) {
+        console.error("Failed to fetch reviews", err);
+      }
+    };
+
+    fetchReviews();
   }, [product]);
 
   const getLowestPriceInfo = () => {
@@ -225,6 +243,52 @@ function ProductDetails() {
       api.error({
         message: 'Error',
         description: 'Invalid or expired login. Please re-authenticate.',
+        placement: 'topRight',
+      });
+    }
+  };
+
+  const submitReview = async () => {
+    if (!token) {
+      api.info({
+        message: 'Login Required',
+        description: 'Please log in to post a review.',
+        placement: 'topRight',
+      });
+      return;
+    }
+
+    if (!newRating || !newComment.trim()) {
+      api.warning({
+        message: 'Incomplete Review',
+        description: 'Please give a rating and write a comment.',
+        placement: 'topRight',
+      });
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${API_URL}/api/reviews/${product.product_id}`,
+        { rating: newRating, comment: newComment },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Clear form and refresh reviews
+      setNewRating(0);
+      setNewComment('');
+      setReviews(prev => [res.data, ...prev]);
+
+      api.success({
+        message: 'Review Posted',
+        description: 'Thank you for your feedback!',
+        placement: 'topRight',
+      });
+    } catch (err) {
+      console.error('Failed to post review', err);
+      api.error({
+        message: 'Error',
+        description: 'Could not post review. You may have already posted one.',
         placement: 'topRight',
       });
     }
@@ -495,8 +559,76 @@ function ProductDetails() {
           key="3"
           style={{ padding: '0 1rem' }}
         >
-          {/* Placeholder for review content */}
-          <p style={{ padding: '1rem', color: '#888' }}>No reviews available yet.</p>
+          {token && (
+            <div style={{ marginBottom: '1rem' }}>
+              <p style={{ fontWeight: 'bold' }}>Leave a review:</p>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <Rate value={newRating} onChange={setNewRating} />
+              </div>
+              <textarea
+                rows={3}
+                placeholder="Write your comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  border: '1px solid #ddd'
+                }}
+              />
+              <Button
+                type="primary"
+                onClick={submitReview}
+                style={{ marginTop: '0.5rem', backgroundColor: '#1677ff' }}
+              >
+                Submit Review
+              </Button>
+            </div>
+          )}
+
+          {/* Show reviews */}
+          {reviews.length === 0 ? (
+            <p style={{ padding: '1rem', color: '#888' }}>No reviews available yet.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {reviews.map((rev, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    gap: '1rem',
+                    alignItems: 'flex-start'
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: '#1890ff',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '36px',
+                      height: '36px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold',
+                      fontSize: '16px'
+                    }}
+                  >
+                    {rev.username[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 'bold' }}>{rev.username}</div>
+                    <div style={{ fontSize: '12px', color: '#999' }}>
+                      {getTimeSince(new Date(rev.createdAt))}
+                    </div>
+                    <Rate disabled value={rev.rating} style={{ fontSize: '14px' }} />
+                    <div style={{ marginTop: '0.3rem' }}>{rev.comment}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Panel>
       </Collapse>
     </div>
