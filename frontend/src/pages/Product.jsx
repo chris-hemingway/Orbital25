@@ -17,13 +17,13 @@ function Product() {
   const [selectedStores, setSelectedStores] = useState(initialStores);
   const [activeSearchTerm, setActiveSearchTerm] = useState(initialTerm);
   const [activeSelectedStores, setActiveSelectedStores] = useState(initialStores);
-
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8;
-
   const [productData, setProductData] = useState([]);
-
   const API_URL = import.meta.env.VITE_API_URL;
+  const [sortOption, setSortOption] = useState('priceLowToHigh'); // default
+  const [ratingSort, setRatingSort] = useState(false);
+  const [salesSort, setSalesSort] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -53,13 +53,28 @@ function Product() {
       ? []
       : productData
           .filter((product) => {
-            const nameMatch = keywords.every((k) => product.name.toLowerCase().includes(k));
+            const nameMatch = keywords.every((k) =>
+              product.name.toLowerCase().includes(k)
+            );
             const storeMatch =
               activeSelectedStores.length === 0 ||
               activeSelectedStores.includes(product.store_name.toLowerCase());
             return nameMatch && storeMatch;
           })
-          .sort((a, b) => a.current_price - b.current_price);
+          .sort((a, b) => {
+            switch (sortOption) {
+              case 'priceHighToLow':
+                return (b.current_price ?? 0) - (a.current_price ?? 0);
+              case 'priceLowToHigh':
+                return (a.current_price ?? 0) - (b.current_price ?? 0);
+              case 'rating':
+                return (b.rating ?? 0) - (a.rating ?? 0);
+              case 'sales':
+                return (b.num_reviews ?? 0) - (a.num_reviews ?? 0);
+              default:
+                return 0;
+            }
+          });
 
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * pageSize,
@@ -76,7 +91,17 @@ function Product() {
     });
   };
 
-  
+  const toggleRatingSort = () => {
+    setRatingSort(!ratingSort);
+    if (!ratingSort) setSalesSort(false);
+    setSortOption('rating');
+  };
+
+  const toggleSalesSort = () => {
+    setSalesSort(!salesSort);
+    if (!salesSort) setRatingSort(false);
+    setSortOption('sales');
+  };
 
   return (
     <div
@@ -87,41 +112,68 @@ function Product() {
         marginTop: '2.5rem',
       }}
     >
-      {/* Search Bar */}
-      <div
-        style={{
-          marginBottom: '2rem',
-          display: 'flex',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-        }}
-      >
+      {/* Search bar section */}
+      <div className="search-controls">
         <Input
+          className="search-input"
           placeholder="Search for a product..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onPressEnter={handleSearch}
-          style={{ width: '300px' }}
         />
+        <Button className="pink-search-btn" onClick={handleSearch}>
+          Search
+        </Button>
+      </div>
+
+      {/* Sort and filter row */}
+      <div className="sort-filter-bar">
+        <span style={{ fontWeight: 500 }}>Sort by</span>
+
+        <Button
+          className={`pink-toggle-btn ${ratingSort ? 'active' : ''}`}
+          onClick={toggleRatingSort}
+        >
+          Top Ratings
+        </Button>
+
+        <Button
+          className={`pink-toggle-btn ${salesSort ? 'active' : ''}`}
+          onClick={toggleSalesSort}
+        >
+          Top Sales
+        </Button>
+
+        <Select
+          placeholder="Price: Low to High"
+          onChange={(value) => {
+            setSortOption(value);
+            setSalesSort(false);
+            setRatingSort(false);
+          }}
+          className="pink-bordered-select select-sort"
+          options={[
+            { value: 'priceLowToHigh', label: 'Price: Low to High' },
+            { value: 'priceHighToLow', label: 'Price: High to Low' },
+          ]}
+        />
+
         <Select
           mode="multiple"
           allowClear
           placeholder="Select stores"
           value={selectedStores}
           onChange={(value) => setSelectedStores(value)}
-          style={{ minWidth: '200px' }}
+          className="pink-bordered-select select-store"
           options={[
             { value: 'amazon', label: 'Amazon' },
             { value: 'lazada', label: 'Lazada' },
             { value: 'shopee', label: 'Shopee' },
           ]}
         />
-        <Button type="primary" onClick={handleSearch}>
-          Search
-        </Button>
       </div>
 
+     <div style={{ marginTop: '3rem' }}>
       {paginatedProducts.length > 0 ? (
         <>
           <Row gutter={[16, 16]} justify="center">
@@ -228,9 +280,10 @@ function Product() {
             onChange={(page) => setCurrentPage(page)}
           />
         </>
-      ) : (
+        ) : (
         <p style={{ textAlign: 'center' }}>No matching products found.</p>
       )}
+     </div>
     </div>
   );
 }

@@ -165,3 +165,93 @@ button:focus-visible {
 .ant-card:hover {
   transform: scale(1.03);
 }
+
+/* Pink search button */
+.pink-search-btn {
+  background-color: #ff4d9d;
+  border: 1px solid #ff4d9d;
+  color: white;
+  font-weight: 500;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pink-search-btn:hover,
+.pink-search-btn:focus {
+  background-color: #e0488c;
+  border-color: #e0488c;
+  color: white;
+  box-shadow: 0 0 0 2px rgba(255, 77, 157, 0.2);
+}
+
+/* Search section container */
+.search-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* Sort and filter row */
+.sort-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Search input width */
+.search-input {
+  width: 300px;
+}
+
+/* Select border and glow */
+.pink-bordered-select .ant-select-selector {
+  border-color: #ff4d9d !important;
+  border-width: 2px;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.pink-bordered-select.ant-select-focused .ant-select-selector,
+.pink-bordered-select .ant-select-selector:hover {
+  border-color: #ff4d9d !important;
+  box-shadow: 0 0 0 2px rgba(255, 77, 157, 0.2);
+}
+
+/* Pink arrow and text inside selects */
+.pink-bordered-select .ant-select-arrow {
+  color: #ff4d9d;
+}
+
+.pink-bordered-select .ant-select-selection-item,
+.pink-bordered-select .ant-select-selection-placeholder {
+  color: #ff4d9d !important;
+  font-weight: 500;
+}
+
+/* Toggle buttons */
+.pink-toggle-btn {
+  border: 1px solid #ff4d9d;
+  color: #ff4d9d;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.pink-toggle-btn.active {
+  background-color: #ff4d9d;
+  color: white;
+  box-shadow: 0 0 0 2px rgba(255, 77, 157, 0.3);
+}
+
+/* Store and price select widths */
+.select-store {
+  min-width: 155px;
+}
+
+.select-sort {
+  width: 160px;
+}
+
