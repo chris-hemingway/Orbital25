@@ -78,6 +78,40 @@ function getTimeSince(date) {
   }
 }
 
+function linearRegression(priceHistory, predictionHorizon) {
+  if (!priceHistory || priceHistory.length < 2) return { points: [] };
+
+  // Prepare x (timestamps) and y (prices)
+  const x = priceHistory.map(entry => new Date(entry.date).getTime());
+  const y = priceHistory.map(entry => entry.price);
+
+  const n = x.length;
+  const meanX = x.reduce((a, b) => a + b, 0) / n;
+  const meanY = y.reduce((a, b) => a + b, 0) / n;
+
+  const numerator = x.reduce((sum, xi, i) => sum + (xi - meanX) * (y[i] - meanY), 0);
+  const denominator = x.reduce((sum, xi) => sum + (xi - meanX) ** 2, 0);
+
+  const slope = numerator / denominator;
+  const intercept = meanY - slope * meanX;
+
+  // Predict future prices starting from today
+  const now = new Date().getTime();
+  const points = [];
+
+  for (let i = 0; i <= predictionHorizon; i++) {
+    const futureDate = now + i * 24 * 60 * 60 * 1000; // add i days
+    const predicted = slope * futureDate + intercept;
+
+    points.push({
+      date: futureDate,
+      predicted: parseFloat(predicted.toFixed(2)),
+    });
+  }
+
+  return { points };
+}
+
 function ProductDetails() {
   const { state } = useLocation();
   const product = state?.product;
@@ -92,6 +126,9 @@ function ProductDetails() {
   const [reviews, setReviews] = useState([]);
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState('');
+  const [showPrediction, setShowPrediction] = useState(false);
+  const [predictionHorizon, setPredictionHorizon] = useState(30);
+  const [predictedData, setPredictedData] = useState([]);
 
   // Check if product is already in wishlist
   useEffect(() => {
@@ -465,30 +502,64 @@ function ProductDetails() {
               style={{ padding: '0 1rem' }}
             >
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={priceHistory}>
+                <LineChart
+                  data={
+                    showPrediction
+                      ? linearRegression(priceHistory, predictionHorizon).points
+                      : priceHistory
+                  }
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="date"
                     type="number"
                     scale="time"
-                    domain={['auto', 'auto']}
+                    domain={
+                      showPrediction
+                        ? [
+                            new Date().getTime(),
+                            new Date().getTime() + predictionHorizon * 24 * 60 * 60 * 1000
+                          ]
+                        : ['auto', 'auto']
+                    }
                     tickFormatter={(date) =>
-                      new Date(date).toLocaleDateString('en-CA') // shows YYYY-MM-DD
+                      new Date(date).toLocaleDateString('en-CA')
                     }
                   />
                   <YAxis domain={['auto', 'auto']} />
                   <Tooltip
-                    labelFormatter={(value) =>
-                      new Date(value).toLocaleDateString('en-CA')
-                    }
-                    formatter={(value) => [`S$${value}`, 'Price']}
+                    formatter={(value, name) => {
+                      if (name === `Predicted Price (${predictionHorizon}d)`) {
+                        return [`S$${value.toFixed(2)}`, `Predicted Price (${predictionHorizon}d)`];
+                      } else {
+                        return [`S$${value.toFixed(2)}`, 'Price'];
+                      }
+                    }}
+                    labelFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleDateString('en-CA');
+                    }}
                   />
-                  <Line
-                    type="stepAfter"
-                    dataKey="price"
-                    stroke="#8884d8"
-                    strokeWidth={2}
-                  />
+                  {!showPrediction && (
+                    <Line
+                      type="stepAfter"
+                      dataKey="price"
+                      stroke="#8884d8"
+                      strokeWidth={2}
+                    />
+                  )}
+
+                  {showPrediction && (
+                    <Line
+                      type="monotone"
+                      dataKey="predicted"
+                      stroke="#888"
+                      strokeDasharray="5 5"
+                      dot={false}
+                      isAnimationActive={false}
+                      name={`Predicted Price (${predictionHorizon}d)`}
+                    />
+                  )}
                 </LineChart>
               </ResponsiveContainer>
 
@@ -515,7 +586,6 @@ function ProductDetails() {
                       <Tag
                         color="green"
                         style={{ fontSize: '16px', padding: '4px 10px' }}
-                        className="blinking-now"
                       >
                         Now
                       </Tag>
@@ -530,6 +600,37 @@ function ProductDetails() {
                       </>
                     )}
                   </div>
+                  <div style={{ marginTop: '1rem' }}>
+                    <span style={{ fontWeight: 'bold' }}>Price Prediction:</span>{' '}
+                    <Button
+                      type={showPrediction ? "primary" : "default"}
+                      onClick={() => setShowPrediction(prev => !prev)}
+                      size="small"
+                      style={{ marginRight: '0.5rem' }}
+                    >
+                      {showPrediction ? "Hide Prediction" : "Show Prediction"}
+                    </Button>
+                    {showPrediction && (
+                      <>
+                        <Button
+                          size="small"
+                          type={predictionHorizon === 30 ? "primary" : "default"}
+                          onClick={() => setPredictionHorizon(30)}
+                          style={{ marginRight: '0.5rem' }}
+                        >
+                          +30d
+                        </Button>
+                        <Button
+                          size="small"
+                          type={predictionHorizon === 90 ? "primary" : "default"}
+                          onClick={() => setPredictionHorizon(90)}
+                        >
+                          +90d
+                        </Button>
+                      </>
+                    )}
+                  </div>
+
                 </div>
               )}
             </Panel>
