@@ -152,16 +152,26 @@ html, body {
   align-items: flex-start;
 }
 
-.search-button {
-  color: #ffffff;
+.pink-search-btn2 {
+  background-color: #ff4d9d;
+  color: white;
+  font-weight: 500;
+  border: 2px solid #ff4d9d;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  align-self: center;
   width: 167px;
   height: 48px;
-  align-self: center;
-  font-style: normal;
-  font-weight: 800;
-  border-color: rgba(25, 24, 24, 0);
   border-radius: var(--dl-layout-radius-radius2);
-  background-color: rgb(253, 70, 131);
+}
+
+.pink-search-btn2:hover {
+  background-color: white;
+  color: #ff4d9d;
+  border-color: #ff4d9d;
+  box-shadow: 0 0 0 3px rgba(255, 77, 157, 0.2);
+  cursor: pointer;
 }
 
 .search-container20 {

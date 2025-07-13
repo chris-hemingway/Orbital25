@@ -563,7 +563,7 @@ function ProductDetails() {
                 </LineChart>
               </ResponsiveContainer>
 
-              {/* 💡 Lowest Historical Price */}
+              {/* Lowest Historical Price */}
               {getLowestPriceInfo() && (
                 <div style={{
                   marginTop: '1rem',
