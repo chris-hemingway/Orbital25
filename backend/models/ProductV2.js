@@ -18,4 +18,4 @@ const productV2Schema = new mongoose.Schema({
     ]
 });
 
-module.exports = mongoose.model('ProductV2', productV2Schema, 'productv2');
+module.exports = mongoose.model('ProductV2', productV2Schema, 'productv3');
