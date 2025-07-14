@@ -100,8 +100,13 @@ function linearRegression(priceHistory, predictionHorizon) {
   const points = [];
 
   for (let i = 0; i <= predictionHorizon; i++) {
-    const futureDate = now + i * 24 * 60 * 60 * 1000; // add i days
+    const futureDate = now + i * 24 * 60 * 60 * 1000;
     const predicted = slope * futureDate + intercept;
+
+    // if prediction falls below 30% of current price, abort
+    if (predicted < 0.3 * priceHistory[priceHistory.length - 1].price) {
+      return { points: null };
+    }
 
     points.push({
       date: futureDate,
@@ -129,6 +134,8 @@ function ProductDetails() {
   const [showPrediction, setShowPrediction] = useState(false);
   const [predictionHorizon, setPredictionHorizon] = useState(30);
   const [predictedData, setPredictedData] = useState([]);
+  const regressionResult = linearRegression(priceHistory, predictionHorizon);
+  const predictionPoints = regressionResult.points;
 
   // Check if product is already in wishlist
   useEffect(() => {
@@ -504,8 +511,8 @@ function ProductDetails() {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart
                   data={
-                    showPrediction
-                      ? linearRegression(priceHistory, predictionHorizon).points
+                    showPrediction && predictionPoints
+                      ? predictionPoints
                       : priceHistory
                   }
                 >
@@ -607,6 +614,7 @@ function ProductDetails() {
                       onClick={() => setShowPrediction(prev => !prev)}
                       size="small"
                       style={{ marginRight: '0.5rem' }}
+                      disabled={!predictionPoints} // disable when invalid
                     >
                       {showPrediction ? "Hide Prediction" : "Show Prediction"}
                     </Button>
