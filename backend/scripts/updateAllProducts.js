@@ -68,13 +68,15 @@ async function scrapeAndUpdate() {
     //   } 
     // ^ for debugging
 
-      if (result.price !== product.current_price) {
-        product.price_history.push({
-          price: product.current_price,
-          date: new Date()
-        });
-        product.current_price = result.price;
-      }
+    if (result.price && result.price !== product.current_price) {
+    product.price_history.push({
+        price: product.current_price,
+        date: new Date()
+    });
+    product.current_price = result.price;
+    } else if (!result.price) {
+    console.warn(`Price was 0 or missing for product ${product.product_id}. Keeping previous price.`);
+    }
 
       product.rating = result.rating || product.rating;
       product.num_reviews = result.num_reviews || product.num_reviews;
