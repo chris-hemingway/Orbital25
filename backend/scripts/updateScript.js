@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const scrapeAndUpdate = require("./updateSelectedProducts");
+const scrapeAndUpdate = require("./updateAllProducts"); 
 
 const app = express();
 const PORT = process.env.PORT || 8080;
