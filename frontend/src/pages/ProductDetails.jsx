@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Card, Rate, Button, Space, notification, Collapse, Badge, Typography, Tag } from 'antd';
+import { Card, Rate, Button, Space, notification, Collapse, Badge, Typography, Tag, message, Modal, Input } from 'antd';
 import { HeartOutlined, HeartFilled, ArrowLeftOutlined, DollarCircleOutlined, LineChartOutlined, UserOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../components/AuthContext';
@@ -136,6 +136,8 @@ function ProductDetails() {
   const [predictedData, setPredictedData] = useState([]);
   const regressionResult = linearRegression(priceHistory, predictionHorizon);
   const predictionPoints = regressionResult.points;
+  const [alertModalVisible, setAlertModalVisible] = useState(false);
+  const [alertPrice, setAlertPrice] = useState('');
 
   // Check if product is already in wishlist
   useEffect(() => {
@@ -338,6 +340,52 @@ function ProductDetails() {
     }
   };
 
+  const handleSetAlert = () => {
+    if (!token) {
+      api.info({
+        message: 'Login Required',
+        description: 'Please log in to set a price alert.',
+        placement: 'topRight',
+      });
+      return;
+    }
+  
+    setAlertModalVisible(true);
+  };
+  
+  const handleModalOk = async () => {
+    if (!alertPrice || isNaN(alertPrice)) {
+      message.error('Please enter a valid price.');
+      return;
+    }
+  
+    try {
+        await axios.post(
+          `${API_URL}/api/alerts`,
+          {
+            product: product._id,
+            target_price: parseFloat(parseFloat(alertPrice).toFixed(2))
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+    
+        message.success(`Price alert set at S$${alertPrice}`);
+        setAlertModalVisible(false);
+        setAlertPrice('');
+      } catch (err) {
+        if (err.response?.status === 400 && err.response?.data?.error) {
+          message.warning(err.response.data.error); // Duplicate alert message
+        } else {
+          console.error(err);
+          message.error('Failed to set price alert');
+        }
+      }
+    };
+
   return (
     <div
       style={{
@@ -424,7 +472,7 @@ function ProductDetails() {
               key="2"
               style={{ padding: '0 1rem' }}
             >
-              {/* 🔘 Toggle average time window */}
+              {/* Toggle average time window */}
               <div style={{ marginBottom: '1rem' }}>
                 <span style={{ marginRight: '0.5rem' }}>Average from last:</span>
                 {[7, 30, 90, 'all'].map((days) => (
@@ -439,6 +487,27 @@ function ProductDetails() {
                   </Button>
                 ))}
               </div>
+              
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <Button type="primary" onClick={handleSetAlert}>
+                Set Price Alert
+            </Button>
+            </div>
+
+            <Modal
+                title="Set Price Alert"
+                open={alertModalVisible}
+                onOk={handleModalOk}
+                onCancel={() => setAlertModalVisible(false)}
+                okText="Set Alert"
+            >
+                <Input
+                    prefix="S$"
+                    placeholder="Enter target price"
+                    value={alertPrice}
+                    onChange={(e) => setAlertPrice(e.target.value)}
+                />
+            </Modal>
 
               {/* Price drop from selected average */}
               {(() => {
