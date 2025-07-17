@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Card, List, Typography, Button, Pagination, message, Popconfirm } from 'antd';
+import { Card, List, Typography, Button, Pagination, message, Popconfirm, notification } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useAuth } from '../components/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,9 @@ function Dashboard() {
   const pageSize = 5;
   const [wishlist, setWishlist] = useState([]);
   const [wishlistPage, setWishlistPage] = useState(1);
+
+  const [triggeredAlerts, setTriggeredAlerts] = useState([]);
+  const [seenAlertIds, setSeenAlertIds] = useState(new Set());
 
   const navigate = useNavigate();
 
@@ -57,6 +60,37 @@ function Dashboard() {
 
     fetchWishlistDetails();
   }, [token]);
+
+  useEffect(() => {
+    const fetchTriggeredAlerts = async () => {
+      if (!token) return;
+  
+      try {
+        const res = await axios.get(`${API_URL}/api/alerts/triggered`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setTriggeredAlerts(res.data);
+      } catch (err) {
+        console.error('Error fetching triggered alerts:', err);
+      }
+    };
+  
+    fetchTriggeredAlerts();
+  }, [token]);
+
+  useEffect(() => {
+    triggeredAlerts.forEach((alert) => {
+      if (!seenAlertIds.has(alert._id)) {
+        notification.info({
+          message: 'Price Alert Triggered!',
+          description: `"${alert.product.name}" dropped to S$${alert.product.current_price} (your target was S$${alert.target_price})`,
+          duration: 6
+        });
+  
+        setSeenAlertIds((prev) => new Set(prev).add(alert._id));
+      }
+    });
+  }, [triggeredAlerts]);
 
   const handleDelete = async (alertId) => {
     try {

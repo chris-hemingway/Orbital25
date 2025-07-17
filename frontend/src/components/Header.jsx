@@ -18,14 +18,14 @@ function Header() {
           },
           // add Dashboard only when logged in
           ...(token && !isGuest ? [{
-            label: 'Dashboard',
+            label: 'Wishlist & Alerts',
             key: 'dashboard',
           }] : []),
           // add Wishlist only when logged in
-          ...(token && !isGuest ? [{
-            label: 'Wishlist',
-            key: 'wishlist',
-          }] : []),
+          // ...(token && !isGuest ? [{
+          //   label: 'Wishlist',
+          //   key: 'wishlist',
+          // }] : []),
           // add Logout only when logged in
           ...(token && !isGuest ? [{
             label: 'Logout',

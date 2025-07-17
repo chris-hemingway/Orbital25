@@ -5,7 +5,6 @@ const priceAlertSchema = new mongoose.Schema({
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'ProductV3', required: true },
     target_price: { type: Number, required: true },
     triggered: { type: Boolean, default: false },
-    created_at: { type: Date, default: Date.now }
   });
 
 module.exports = mongoose.model('PriceAlert', priceAlertSchema);
