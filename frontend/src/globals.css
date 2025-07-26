@@ -166,7 +166,6 @@ button:focus-visible {
   transform: scale(1.03);
 }
 
-/* Pink search button */
 .pink-search-btn {
   background-color: #ff4d9d;
   border: 1px solid #ff4d9d;
@@ -183,7 +182,6 @@ button:focus-visible {
   box-shadow: 0 0 0 2px rgba(255, 77, 157, 0.2);
 }
 
-/* Search section container */
 .search-controls {
   display: flex;
   gap: 1rem;
@@ -192,7 +190,6 @@ button:focus-visible {
   margin-bottom: 1rem;
 }
 
-/* Sort and filter row */
 .sort-filter-bar {
   display: flex;
   align-items: center;
@@ -202,12 +199,10 @@ button:focus-visible {
   justify-content: center;
 }
 
-/* Search input width */
 .search-input {
   width: 300px;
 }
 
-/* Select border and glow */
 .pink-bordered-select .ant-select-selector {
   border-color: #ff4d9d !important;
   border-width: 2px;
@@ -221,7 +216,6 @@ button:focus-visible {
   box-shadow: 0 0 0 2px rgba(255, 77, 157, 0.2);
 }
 
-/* Pink arrow and text inside selects */
 .pink-bordered-select .ant-select-arrow {
   color: #ff4d9d;
 }
@@ -232,7 +226,6 @@ button:focus-visible {
   font-weight: 500;
 }
 
-/* Toggle buttons */
 .pink-toggle-btn {
   border: 1px solid #ff4d9d;
   color: #ff4d9d;
@@ -246,7 +239,6 @@ button:focus-visible {
   box-shadow: 0 0 0 2px rgba(255, 77, 157, 0.3);
 }
 
-/* Store and price select widths */
 .select-store {
   min-width: 155px;
 }
