@@ -16,9 +16,7 @@ import RequireAuth from './components/RequireAuth';
 import Search from './pages/Search/Search';
 import { useAuth } from "./components/AuthContext";
 import ProductDetails from './pages/ProductDetails';
-import Temp from './pages/Temp';
 import Product from './pages/Product';
-import Wishlist from './pages/Wishlist';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -150,24 +148,10 @@ useEffect(() => {
         />
 
         <Route
-          path="/temp"
-          element={<Temp />}
-        />
-
-        <Route
           path="/products"
           element={
               <RequireAuth>
                 <Layout><Product /></Layout>
-              </RequireAuth>
-          }
-        />
-
-        <Route
-          path="/wishlist"
-          element={
-              <RequireAuth>
-                <Layout><Wishlist /></Layout>
               </RequireAuth>
           }
         />

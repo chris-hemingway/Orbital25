@@ -73,7 +73,7 @@ function Search() {
                     />
                   </div>
                   <div className="search-container19"></div>
-                  <button type="button" className="search-button button" onClick={handleSearch}>
+                  <button type="button" className="pink-search-btn2" onClick={handleSearch}>
                     Search Now
                   </button>
                 </div>
