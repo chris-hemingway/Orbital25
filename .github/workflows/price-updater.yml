@@ -5,8 +5,8 @@ on:
     branches:
       - pricehistory
   schedule:
-    - cron: '0 18 * * *' # 2AM Singapore (UTC+8 = 18:00 UTC)
-  workflow_dispatch: # Optional: allows manual trigger
+    - cron: '0 18 * * *' # 2AM Singapore
+  workflow_dispatch: # for manual trigger
 
 jobs:
   run-updater-job:

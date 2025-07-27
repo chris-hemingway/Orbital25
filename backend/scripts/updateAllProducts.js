@@ -30,7 +30,6 @@ async function scrapeAndUpdate() {
       });
 
       const result = await page.evaluate(() => {
-        // Amazon selectors
         const priceElement = document.querySelector('.a-price .a-offscreen') || 
                             document.querySelector('#priceblock_ourprice') ||
                             document.querySelector('#priceblock_dealprice');
@@ -51,22 +50,13 @@ async function scrapeAndUpdate() {
         };
       });
 
-      // Additional checks for Amazon products
       if (!result.price) {
-        // Try alternative price location
         const altPrice = await page.evaluate(() => {
           const element = document.querySelector('#twister-plus-price-data-price');
           return element ? parseFloat(element.getAttribute('value')) : 0;
         });
         result.price = altPrice || result.price;
       }
-
-    //   if (!result.price) {
-    //     console.warn(`Price not found for product ${product.product_id}`);
-    //     await page.screenshot({ path: `debug_${product.product_id}.png` });
-    //     continue;
-    //   } 
-    // ^ for debugging
 
     if (result.price && result.price !== product.current_price) {
     product.price_history.push({
