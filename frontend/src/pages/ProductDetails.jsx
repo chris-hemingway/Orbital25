@@ -489,7 +489,7 @@ function ProductDetails() {
               </div>
               
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-            <Button type="primary" onClick={handleSetAlert}>
+            <Button type="primary" onClick={handleSetAlert} data-testid="set-price-alert-btn">
                 Set Price Alert
             </Button>
             </div>
@@ -500,12 +500,15 @@ function ProductDetails() {
                 onOk={handleModalOk}
                 onCancel={() => setAlertModalVisible(false)}
                 okText="Set Alert"
+                okButtonProps={{ 'data-testid': 'confirm-set-alert' }}
+                data-testid="price-alert-modal"
             >
                 <Input
                     prefix="S$"
                     placeholder="Enter target price"
                     value={alertPrice}
                     onChange={(e) => setAlertPrice(e.target.value)}
+                    data-testid="price-input"
                 />
             </Modal>
 
