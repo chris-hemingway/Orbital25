@@ -81,15 +81,25 @@ function Product() {
 
   // Toggle sort buttons
   const toggleRatingSort = () => {
-    setRatingSort(!ratingSort);
-    if (!ratingSort) setSalesSort(false);
-    setSortOption('rating');
+    const toggled = !ratingSort;
+    setRatingSort(toggled);
+    if (toggled) {
+      setSalesSort(false);
+      setSortOption('rating');
+    } else {
+      setSortOption('');
+    }
   };
 
   const toggleSalesSort = () => {
-    setSalesSort(!salesSort);
-    if (!salesSort) setRatingSort(false);
-    setSortOption('sales');
+    const toggled = !salesSort;
+    setSalesSort(toggled);
+    if (toggled) {
+      setRatingSort(false);
+      setSortOption('sales');
+    } else {
+      setSortOption('');
+    }
   };
 
   return (
@@ -140,6 +150,7 @@ function Product() {
             setSalesSort(false);
             setRatingSort(false);
           }}
+          disabled={ratingSort || salesSort}
           className="pink-bordered-select select-sort"
           options={[
             { value: 'priceLowToHigh', label: 'Price: Low to High' },
