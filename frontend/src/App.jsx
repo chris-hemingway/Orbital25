@@ -8,10 +8,8 @@ import { jwtDecode } from "jwt-decode";
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Layout from './components/Layout';
-import Header from './components/Header';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
-import Footer from './components/Footer';
 import RequireAuth from './components/RequireAuth';
 import Search from './pages/Search/Search';
 import { useAuth } from "./components/AuthContext";
@@ -70,12 +68,10 @@ useEffect(() => {
     setUsername(decoded.username);
 
     if (decoded.exp < now) {
-      // Token expired
       localStorage.removeItem("token");
       messageApi.warning("Session expired. Please log in again.");
       navigate("/login");
     } else {
-      // Token is valid
       const timeout = setTimeout(() => {
         localStorage.removeItem("token");
         messageApi.warning("Session expired. Please log in again.");
