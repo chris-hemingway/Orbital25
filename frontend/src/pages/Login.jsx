@@ -43,12 +43,6 @@ function Login({ onFinish, loading }) {
         <Input.Password placeholder="Password" />
       </Form.Item>
 
-      <div style={{ textAlign: "left", marginBottom: 16 }}>
-        <Link onClick={() => { /* navigate to forgot password */ }}>
-          Forgot your password?
-        </Link>
-      </div>
-
       <Form.Item>
         <Button
           type="primary"
